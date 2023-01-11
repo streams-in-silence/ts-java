@@ -1,1 +1,2 @@
-export * from './types';
+export * from './exceptions';
+export type { Optional } from './types';
