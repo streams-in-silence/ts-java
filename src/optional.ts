@@ -97,6 +97,3 @@ export class Optional<T> implements IOptional<T> {
     return JSON.stringify(this);
   }
 }
-
-const o = Optional.of('');
-o.toString();
