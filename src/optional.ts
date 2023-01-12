@@ -79,11 +79,11 @@ export class Optional<T> implements IOptional<T> {
   }
 
   public orElse(other: T): T {
-    return this.value || other;
+    return this.value ?? other;
   }
 
   public orElseGet(other: () => T): T {
-    return this.value || other();
+    return this.value ?? other();
   }
 
   public orElseThrow(exceptionSupplier: () => Error): T {
@@ -94,6 +94,6 @@ export class Optional<T> implements IOptional<T> {
   }
 
   public toString(): string {
-    return JSON.stringify(this);
+    return `Optional[${JSON.stringify(this)}]`;
   }
 }
