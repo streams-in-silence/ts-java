@@ -24,7 +24,6 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@types/lodash": "4.14.191",
     "@types/node": "18.11.17",
     "@types/prettier": "2.7.1",
     "@typescript-eslint/eslint-plugin": "5.47.0",
@@ -36,8 +35,5 @@
     "vite": "4.0.2",
     "vite-plugin-dts": "1.7.1",
     "vitest": "0.26.0"
-  },
-  "dependencies": {
-    "lodash": "4.17.21"
   }
 }
