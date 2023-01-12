@@ -1,9 +1,5 @@
-import { isPrimitive } from './typeguards';
+import equals from 'lodash/isEqual';
 
 export function isEqual(a: unknown, b: unknown): boolean {
-  if (isPrimitive(a) && isPrimitive(b)) {
-    return a === b;
-  }
-
-  return JSON.stringify(a) === JSON.stringify(b);
+  return equals(a, b);
 }
