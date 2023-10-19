@@ -67,7 +67,7 @@ export class Optional<T> implements IOptional<T> {
     consumer(this.value);
   }
 
-  public isPresent(): boolean {
+  public isPresent(): this is Optional<NonNullable<T>> {
     return !isNull(this.value);
   }
 
