@@ -51,7 +51,7 @@ describe('Optional', () => {
 
       const result = a.equals(b);
 
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
 
     it('should return false when the value of another optional is different', () => {
@@ -69,7 +69,7 @@ describe('Optional', () => {
 
       const result = a.equals(b);
 
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
 
     it('should work for objects', () => {
@@ -78,7 +78,7 @@ describe('Optional', () => {
 
       const result = a.equals(b);
 
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
   });
 
@@ -188,7 +188,7 @@ describe('Optional', () => {
 
       const result = optional.isPresent();
 
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
 
     it.each([
@@ -202,7 +202,7 @@ describe('Optional', () => {
 
       const result = optional.isPresent();
 
-      expect(result).toBeTruthy();
+      expect(result).toBe(true);
     });
 
     it('should return false when a value is missing', () => {
