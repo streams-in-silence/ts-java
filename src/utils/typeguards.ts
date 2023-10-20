@@ -1,21 +1,20 @@
-type Primitive = string | number | boolean;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyFunction = (...args: any[]) => any;
 
-export function isString(value: unknown): value is string {
-  return typeof value === 'string';
+export function isDate(value: unknown): value is Date {
+  return value instanceof Date;
 }
 
-export function isBoolean(value: unknown): value is boolean {
-  return typeof value === 'boolean';
+export function isMap<T extends Map<unknown, unknown>>(value: unknown): value is T {
+  return value instanceof Map;
 }
 
-export function isNumber(value: unknown): value is number {
-  return typeof value === 'number';
+export function isSet<T extends Set<unknown>>(value: unknown): value is T {
+  return value instanceof Set;
 }
 
-export function isPrimitive(value: unknown): value is Primitive {
-  return isBoolean(value) || isNumber(value) || isString(value);
+export function isObject(value: unknown): value is object {
+  return typeof value === 'object' && value !== null;
 }
 
 export function isNull(value: unknown): value is null {
@@ -28,8 +27,4 @@ export function isNotNull<T>(value: T | null): value is T {
 
 export function isFunction(value: unknown): value is AnyFunction {
   return typeof value === 'function';
-}
-
-export function isUndefined(value: unknown): value is undefined {
-  return typeof value === 'undefined';
 }
