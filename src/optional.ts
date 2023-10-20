@@ -1,5 +1,5 @@
 import { NoSuchElementException, NullPointerException } from './exceptions';
-import { isEqual, isFunction, isNull } from './utils';
+import { isEqual, isFunction, isNotNull, isNull } from './utils';
 
 export interface Optional<T> {
   equals(other: unknown): boolean;
@@ -84,7 +84,7 @@ export class Optional<T> implements Optional<T> {
   }
 
   public isPresent(): this is Optional<NonNullable<T>> {
-    return !isNull(this.#value);
+    return isNotNull(this.#value);
   }
 
   public map<U>(mapper: (value: T) => U): Optional<U> {
@@ -96,7 +96,7 @@ export class Optional<T> implements Optional<T> {
   }
 
   public or(supplier: () => Optional<T>): Optional<T> {
-    if (!isNull(this.#value)) {
+    if (isNotNull(this.#value)) {
       return Optional.of(this.#value);
     }
 
