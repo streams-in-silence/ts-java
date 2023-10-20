@@ -3,10 +3,10 @@ import { type Optional as IOptional } from './types';
 import { isEqual, isFunction, isNull } from './utils';
 
 export class Optional<T> implements IOptional<T> {
-  private readonly value: T | null;
+  readonly #value: T | null;
 
-  protected constructor(value?: T) {
-    this.value = value ?? null;
+  private constructor(value?: T) {
+    this.#value = value ?? null;
   }
 
   public static empty<T = null>(): Optional<T> {
@@ -41,50 +41,50 @@ export class Optional<T> implements IOptional<T> {
   }
 
   public filter(filter: (value: T) => boolean): Optional<T> {
-    if (isNull(this.value) || !filter(this.value)) {
+    if (isNull(this.#value) || !filter(this.#value)) {
       return Optional.empty();
     }
-    return Optional.of(this.value);
+    return Optional.of(this.#value);
   }
 
   public flatMap<U>(mapper: (value: T) => Optional<U>): Optional<U> {
-    if (isNull(this.value)) {
+    if (isNull(this.#value)) {
       return Optional.empty();
     }
 
-    return mapper(this.value);
+    return mapper(this.#value);
   }
 
   public get(): T {
-    if (isNull(this.value)) {
+    if (isNull(this.#value)) {
       throw new NoSuchElementException();
     }
-    return this.value;
+    return this.#value;
   }
 
   public ifPresent(consumer: (value: T) => void): void {
-    if (isNull(this.value)) {
+    if (isNull(this.#value)) {
       return;
     }
 
-    consumer(this.value);
+    consumer(this.#value);
   }
 
   public isPresent(): this is Optional<NonNullable<T>> {
-    return !isNull(this.value);
+    return !isNull(this.#value);
   }
 
   public map<U>(mapper: (value: T) => U): Optional<U> {
-    if (isNull(this.value)) {
+    if (isNull(this.#value)) {
       return Optional.empty();
     }
 
-    return Optional.of(mapper(this.value));
+    return Optional.of(mapper(this.#value));
   }
 
   public or(supplier: () => Optional<T>): Optional<T> {
-    if (!isNull(this.value)) {
-      return Optional.of(this.value);
+    if (!isNull(this.#value)) {
+      return Optional.of(this.#value);
     }
 
     if (!isFunction(supplier)) {
@@ -92,7 +92,7 @@ export class Optional<T> implements IOptional<T> {
     }
 
     const optional = supplier();
-    
+
     if (!(optional instanceof Optional)) {
       throw new NullPointerException();
     }
@@ -101,18 +101,18 @@ export class Optional<T> implements IOptional<T> {
   }
 
   public orElse(other: T): T {
-    return this.value ?? other;
+    return this.#value ?? other;
   }
 
   public orElseGet(supplier: () => T): T {
-    return this.value ?? supplier();
+    return this.#value ?? supplier();
   }
 
   public orElseThrow(exceptionSupplier: () => Error): T {
-    if (isNull(this.value)) {
+    if (isNull(this.#value)) {
       throw exceptionSupplier();
     }
-    return this.value;
+    return this.#value;
   }
 
   public toString(): string {
