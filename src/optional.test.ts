@@ -259,6 +259,51 @@ describe('Optional', () => {
     });
   });
 
+  describe('or', () => {
+    it('should return self if value is present', () => {
+      const optional = Optional.of('value');
+
+      const result = optional.or(() => Optional.of('default'));
+      
+      expect(result.get()).toBe('value');
+    });
+
+    it('should return the result of the supplier if value is not present', () => {
+      const optional = Optional.empty<string>();
+
+      const result = optional.or(() => Optional.of('default'));
+
+      expect(result.get()).toBe('default');
+    });
+
+    it('should only call the supplier function if value is not present', () => {
+      const spy = vitest.fn(() => Optional.of('default'));
+      const optional = Optional.of('value');
+
+      optional.or(spy);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should throw if the supplier is not a function', () => {
+      const optional = Optional.empty();
+
+      expect(() => {
+        // @ts-expect-error 'or' expects a function that returns an Optional
+        optional.or(null);
+      }).toThrow(NullPointerException);
+    });
+
+    it('should throw if the supplier function returns null', () => {
+      const optional = Optional.empty();
+
+      expect(() => {
+        // @ts-expect-error 'or' expects a function that returns an Optional
+        optional.or(() => null);
+      }).toThrow(NullPointerException);
+    });
+  });
+
   describe('orElse', () => {
     it('should return the original value when a value is present', () => {
       const optional = Optional.of('Test string');

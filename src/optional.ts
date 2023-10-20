@@ -1,6 +1,6 @@
 import { NoSuchElementException, NullPointerException } from './exceptions';
 import { type Optional as IOptional } from './types';
-import { isEqual, isNull } from './utils';
+import { isEqual, isFunction, isNull } from './utils';
 
 export class Optional<T> implements IOptional<T> {
   private readonly value: T | null;
@@ -78,15 +78,34 @@ export class Optional<T> implements IOptional<T> {
     if (isNull(this.value)) {
       return Optional.empty();
     }
+
     return Optional.of(mapper(this.value));
+  }
+
+  public or(supplier: () => Optional<T>): Optional<T> {
+    if (!isNull(this.value)) {
+      return Optional.of(this.value);
+    }
+
+    if (!isFunction(supplier)) {
+      throw new NullPointerException();
+    }
+
+    const optional = supplier();
+    
+    if (!(optional instanceof Optional)) {
+      throw new NullPointerException();
+    }
+
+    return optional;
   }
 
   public orElse(other: T): T {
     return this.value ?? other;
   }
 
-  public orElseGet(other: () => T): T {
-    return this.value ?? other();
+  public orElseGet(supplier: () => T): T {
+    return this.value ?? supplier();
   }
 
   public orElseThrow(exceptionSupplier: () => Error): T {
