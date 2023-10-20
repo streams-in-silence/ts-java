@@ -28,7 +28,7 @@ export class Optional<T> implements Optional<T> {
 
   public static of<T>(value: T): Optional<T> {
     if (isNull(value)) {
-      throw new NullPointerException();
+      throw new NullPointerException('value must not be null');
     }
     return new Optional<T>(value);
   }
@@ -50,12 +50,12 @@ export class Optional<T> implements Optional<T> {
     ) {
       return false;
     }
-    return isEqual(other.get(), this.get());
+    return isEqual(this.get(), other.get());
   }
 
   public filter(filter: (value: T) => boolean): Optional<T> {
     if (isNotFunction(filter)) {
-      throw new NullPointerException();
+      throw new NullPointerException('filter must be a function');
     }
 
     if (isNull(this.#value) || !filter(this.#value)) {
@@ -71,10 +71,16 @@ export class Optional<T> implements Optional<T> {
     }
 
     if (isNotFunction(mapper)) {
-      throw new NullPointerException();
+      throw new NullPointerException('mapper must be a function');
     }
 
-    return mapper(this.#value);
+    const optional = mapper(this.#value);
+
+    if (!(optional instanceof Optional)) {
+      throw new NullPointerException('mapper must return an Optional');
+    }
+
+    return optional;
   }
 
   public get(): T {
@@ -90,7 +96,7 @@ export class Optional<T> implements Optional<T> {
     }
 
     if (isNotFunction(action)) {
-      throw new NullPointerException();
+      throw new NullPointerException('action must be a function');
     }
 
     action(this.#value);
@@ -106,7 +112,7 @@ export class Optional<T> implements Optional<T> {
     }
 
     if (isNotFunction(mapper)) {
-      throw new NullPointerException();
+      throw new NullPointerException('mapper must be a function');
     }
 
     return Optional.of(mapper(this.#value));
@@ -118,13 +124,13 @@ export class Optional<T> implements Optional<T> {
     }
 
     if (isNotFunction(supplier)) {
-      throw new NullPointerException();
+      throw new NullPointerException('supplier must be a function');
     }
 
     const optional = supplier();
 
     if (!(optional instanceof Optional)) {
-      throw new NullPointerException();
+      throw new NullPointerException('supplier must return an Optional');
     }
 
     return optional;
@@ -140,7 +146,7 @@ export class Optional<T> implements Optional<T> {
     }
 
     if (isNotFunction(supplier)) {
-      throw new NullPointerException();
+      throw new NullPointerException('supplier must be a function');
     }
 
     return supplier();
@@ -151,9 +157,9 @@ export class Optional<T> implements Optional<T> {
       return this.#value;
     }
     if (isNotFunction(exceptionSupplier)) {
-      throw new NullPointerException();
+      throw new NullPointerException('exceptionSupplier must be a function');
     }
-    
+
     throw exceptionSupplier();
   }
 

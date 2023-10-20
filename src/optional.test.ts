@@ -120,7 +120,7 @@ describe('Optional', () => {
   describe('flatMap', () => {
     it('should call the mapping function when a value is present', () => {
       const optional = Optional.of('Test value');
-      const spy = vitest.fn();
+      const spy = vitest.fn().mockReturnValue(Optional.of('Other value'));
 
       optional.flatMap(spy);
 
@@ -264,7 +264,7 @@ describe('Optional', () => {
       const optional = Optional.of('value');
 
       const result = optional.or(() => Optional.of('default'));
-      
+
       expect(result.get()).toBe('value');
     });
 
