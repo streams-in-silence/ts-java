@@ -1,12 +1,12 @@
 import { NoSuchElementException, NullPointerException } from './exceptions';
-import { isEqual, isFunction, isNotNull, isNull } from './utils';
+import { isEqual, isNotFunction, isNotNull, isNull } from './utils';
 
 export interface Optional<T> {
   equals(other: unknown): boolean;
   filter(filter: (value: T) => boolean): Optional<T>;
   flatMap<U>(mapper: (value: T) => Optional<U>): Optional<U>;
   get(): T;
-  ifPresent(consumer: (value: T) => void): void;
+  ifPresent(action: (value: T) => void): void;
   isPresent(): this is Optional<NonNullable<T>>;
   map<U>(mapper: (value: T) => U): Optional<U>;
   or(supplier: () => Optional<T>): Optional<T>;
@@ -54,15 +54,24 @@ export class Optional<T> implements Optional<T> {
   }
 
   public filter(filter: (value: T) => boolean): Optional<T> {
+    if (isNotFunction(filter)) {
+      throw new NullPointerException();
+    }
+
     if (isNull(this.#value) || !filter(this.#value)) {
       return Optional.empty();
     }
+
     return Optional.of(this.#value);
   }
 
   public flatMap<U>(mapper: (value: T) => Optional<U>): Optional<U> {
     if (isNull(this.#value)) {
       return Optional.empty();
+    }
+
+    if (isNotFunction(mapper)) {
+      throw new NullPointerException();
     }
 
     return mapper(this.#value);
@@ -75,12 +84,16 @@ export class Optional<T> implements Optional<T> {
     return this.#value;
   }
 
-  public ifPresent(consumer: (value: T) => void): void {
+  public ifPresent(action: (value: T) => void): void {
     if (isNull(this.#value)) {
       return;
     }
 
-    consumer(this.#value);
+    if (isNotFunction(action)) {
+      throw new NullPointerException();
+    }
+
+    action(this.#value);
   }
 
   public isPresent(): this is Optional<NonNullable<T>> {
@@ -92,6 +105,10 @@ export class Optional<T> implements Optional<T> {
       return Optional.empty();
     }
 
+    if (isNotFunction(mapper)) {
+      throw new NullPointerException();
+    }
+
     return Optional.of(mapper(this.#value));
   }
 
@@ -100,7 +117,7 @@ export class Optional<T> implements Optional<T> {
       return Optional.of(this.#value);
     }
 
-    if (!isFunction(supplier)) {
+    if (isNotFunction(supplier)) {
       throw new NullPointerException();
     }
 
@@ -118,14 +135,26 @@ export class Optional<T> implements Optional<T> {
   }
 
   public orElseGet(supplier: () => T): T {
-    return this.#value ?? supplier();
+    if (isNotNull(this.#value)) {
+      return this.#value;
+    }
+
+    if (isNotFunction(supplier)) {
+      throw new NullPointerException();
+    }
+
+    return supplier();
   }
 
   public orElseThrow(exceptionSupplier: () => Error): T {
-    if (isNull(this.#value)) {
-      throw exceptionSupplier();
+    if (isNotNull(this.#value)) {
+      return this.#value;
     }
-    return this.#value;
+    if (isNotFunction(exceptionSupplier)) {
+      throw new NullPointerException();
+    }
+    
+    throw exceptionSupplier();
   }
 
   public toString(): string {

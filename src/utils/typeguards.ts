@@ -28,3 +28,7 @@ export function isNotNull<T>(value: T | null): value is T {
 export function isFunction(value: unknown): value is AnyFunction {
   return typeof value === 'function';
 }
+
+export function isNotFunction<T>(value: T): value is Exclude<T, AnyFunction> {
+  return !isFunction(value);
+}
