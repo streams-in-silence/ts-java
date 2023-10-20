@@ -156,6 +156,7 @@ export class Optional<T> implements Optional<T> {
     if (isNotNull(this.#value)) {
       return this.#value;
     }
+
     if (isNotFunction(exceptionSupplier)) {
       throw new NullPointerException('exceptionSupplier must be a function');
     }
@@ -164,6 +165,9 @@ export class Optional<T> implements Optional<T> {
   }
 
   public toString(): string {
-    return `Optional[${JSON.stringify(this)}]`;
+    if (this.isPresent()) {
+      return `Optional[${this.get()}]`;
+    }
+    return `Optional[null]`;
   }
 }
