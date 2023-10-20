@@ -1,5 +1,5 @@
 import { describe, expect, it, vitest } from 'vitest';
-import { NoSuchElementException } from './exceptions';
+import { NoSuchElementException, NullPointerException } from './exceptions';
 import { Optional } from './optional';
 
 describe('Optional', () => {
@@ -25,17 +25,23 @@ describe('Optional', () => {
       const result = Optional.of('Test value');
       expect(result.get()).toBe('Test value');
     });
+
+    it('should throw a NullPointerException when the parameter is null', () => {
+      expect(() => Optional.of(null)).toThrow(NullPointerException);
+    });
   });
 
   describe('Optional.ofNullable', () => {
     it('should create a new Optional', () => {
       const result = Optional.ofNullable('string');
       expect(result).toBeInstanceOf(Optional);
+      expect(result.isPresent()).toBe(true);
     });
 
     it('should create a new empty Optional when provided null as value', () => {
       const result = Optional.ofNullable(null);
       expect(result).toBeInstanceOf(Optional);
+      expect(result.isPresent()).toBe(false);
     });
 
     it('should set the parameter as the return value of the optional', () => {
@@ -244,12 +250,12 @@ describe('Optional', () => {
     });
 
     it('should apply the mapping function when a value is present', () => {
-      const optional = Optional.of(Optional.of('a string'));
+      const optional = Optional.of(['a', 'b', 'c']);
 
-      const result = optional.map((value) => value);
+      const result = optional.map((value) => value.length);
 
       expect(result).toBeInstanceOf(Optional);
-      expect(result.get()).toBeInstanceOf(Optional);
+      expect(result.get()).toBe(3);
     });
   });
 

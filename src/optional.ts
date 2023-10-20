@@ -1,4 +1,4 @@
-import { NoSuchElementException } from './exceptions';
+import { NoSuchElementException, NullPointerException } from './exceptions';
 import { type Optional as IOptional } from './types';
 import { isEqual, isNull } from './utils';
 
@@ -9,11 +9,14 @@ export class Optional<T> implements IOptional<T> {
     this.value = value ?? null;
   }
 
-  public static empty<T>(): Optional<T> {
+  public static empty<T = null>(): Optional<T> {
     return new Optional<T>();
   }
 
   public static of<T>(value: T): Optional<T> {
+    if (isNull(value)) {
+      throw new NullPointerException();
+    }
     return new Optional<T>(value);
   }
 
@@ -41,7 +44,7 @@ export class Optional<T> implements IOptional<T> {
     if (isNull(this.value) || !filter(this.value)) {
       return Optional.empty();
     }
-    return this;
+    return Optional.of(this.value);
   }
 
   public flatMap<U>(mapper: (value: T) => Optional<U>): Optional<U> {
