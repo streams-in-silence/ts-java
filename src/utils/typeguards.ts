@@ -14,7 +14,7 @@ export function isSet<T extends Set<unknown>>(value: unknown): value is T {
 }
 
 export function isObject(value: unknown): value is object {
-  return typeof value === 'object' && value !== null;
+  return typeof value === 'object' && isNotNull(value);
 }
 
 export function isNull(value: unknown): value is null {
@@ -22,7 +22,7 @@ export function isNull(value: unknown): value is null {
 }
 
 export function isNotNull<T>(value: T | null): value is T {
-  return value !== null;
+  return !isNull(value);
 }
 
 export function isFunction(value: unknown): value is AnyFunction {
