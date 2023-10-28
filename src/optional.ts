@@ -1,7 +1,7 @@
-import { NoSuchElementException } from '../exceptions/no-such-element.exception';
-import { NullPointerException } from '../exceptions/null-pointer.exception';
-import { isEqual } from '../utils/is-equal';
-import { isNotFunction, isNotNull, isNull } from '../utils/typeguards';
+import { NoSuchElementException } from './exceptions/no-such-element.exception';
+import { NullPointerException } from './exceptions/null-pointer.exception';
+import { isEqual } from './utils/is-equal';
+import { isNotFunction, isNotNull, isNull } from './utils/typeguards';
 
 export class Optional<T> {
   readonly #value: T | null;
