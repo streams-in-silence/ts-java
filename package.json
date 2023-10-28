@@ -1,8 +1,8 @@
 {
-  "name": "optional-js",
+  "name": "ts-java",
   "private": true,
   "version": "0.0.0",
-  "description": "Javascript implementation of Java Optionals.",
+  "description": "TypeScript implementation of some Java classes.",
   "author": "Massimo Rosin",
   "type": "module",
   "main": "./dist/optional.umd.cjs",

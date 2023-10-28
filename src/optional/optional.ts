@@ -1,5 +1,7 @@
-import { NoSuchElementException, NullPointerException } from './exceptions';
-import { isEqual, isNotFunction, isNotNull, isNull } from './utils';
+import { NoSuchElementException } from '../exceptions/no-such-element.exception';
+import { NullPointerException } from '../exceptions/null-pointer.exception';
+import { isEqual } from '../utils/is-equal';
+import { isNotFunction, isNotNull, isNull } from '../utils/typeguards';
 
 export interface Optional<T> {
   equals(other: unknown): boolean;
