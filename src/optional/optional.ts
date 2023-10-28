@@ -3,21 +3,7 @@ import { NullPointerException } from '../exceptions/null-pointer.exception';
 import { isEqual } from '../utils/is-equal';
 import { isNotFunction, isNotNull, isNull } from '../utils/typeguards';
 
-export interface Optional<T> {
-  equals(other: unknown): boolean;
-  filter(filter: (value: T) => boolean): Optional<T>;
-  flatMap<U>(mapper: (value: T) => Optional<U>): Optional<U>;
-  get(): T;
-  ifPresent(action: (value: T) => void): void;
-  isPresent(): this is Optional<NonNullable<T>>;
-  map<U>(mapper: (value: T) => U): Optional<U>;
-  or(supplier: () => Optional<T>): Optional<T>;
-  orElse(other: T): T;
-  orElseGet(supplier: () => T): T;
-  orElseThrow(exceptionSupplier: () => Error): T;
-}
-
-export class Optional<T> implements Optional<T> {
+export class Optional<T> {
   readonly #value: T | null;
 
   private constructor(value?: T) {
