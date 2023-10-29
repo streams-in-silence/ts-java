@@ -3,17 +3,21 @@ import {
   isBoolean,
   isComparable,
   isDate,
-  isNone,
   isNull,
   isNumber,
   isPresent,
   isSameType,
   isString,
 } from './utils/typeguards';
-
-type CompareFunction<T> = (a: T, b: T) => number;
+import { ComparableKeyOf, CompareFunction } from './utils/types';
 
 export abstract class Comparator<T> {
+  public static comparing<T>(key: ComparableKeyOf<T>): Comparator<T> {
+    return Comparator.#create((a, b) => {
+      return Comparator.naturalOrder().compare(a[key], b[key]);
+    });
+  }
+
   public static naturalOrder<T>(): Comparator<T> {
     return Comparator.#create((a, b) => {
       if (isNull(a) || isNull(b)) {
@@ -53,13 +57,13 @@ export abstract class Comparator<T> {
       if (isPresent(a) && isPresent(b)) {
         return comparator.compare(a, b);
       }
-      if (isNone(a) && isNone(b)) {
+      if (isNull(a) && isNull(b)) {
         return 0;
       }
-      if (isNone(a)) {
-        return 1;
+      if (isNull(a)) {
+        return -1;
       }
-      return -1;
+      return 1;
     });
   }
 
@@ -68,13 +72,13 @@ export abstract class Comparator<T> {
       if (isPresent(a) && isPresent(b)) {
         return comparator.compare(a, b);
       }
-      if (isNone(a) && isNone(b)) {
+      if (isNull(a) && isNull(b)) {
         return 0;
       }
-      if (isNone(a)) {
-        return -1;
+      if (isNull(a)) {
+        return 1;
       }
-      return 1;
+      return -1;
     });
   }
 
@@ -94,13 +98,23 @@ export abstract class Comparator<T> {
     return Comparator.#create((b, a) => this.compare(a, b));
   }
 
-  public thenComparing(other: Comparator<T>): Comparator<T> {
+  public thenComparing(
+    keyOrComparator: ComparableKeyOf<T> | Comparator<T>
+  ): Comparator<T> {
     return Comparator.#create((a, b) => {
       const result = this.compare(a, b);
       if (result !== 0) {
         return result;
       }
-      return other.compare(a, b);
+
+      if (keyOrComparator instanceof Comparator) {
+        return keyOrComparator.compare(a, b);
+      }
+
+      return Comparator.naturalOrder().compare(
+        a[keyOrComparator],
+        b[keyOrComparator]
+      );
     });
   }
 }

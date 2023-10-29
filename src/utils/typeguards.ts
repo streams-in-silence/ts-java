@@ -1,7 +1,5 @@
 import { Comparable } from '../comparable';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyFunction = (...args: any[]) => any;
+import { AnyFunction } from './types';
 
 export function isDate(value: unknown): value is Date {
   return value instanceof Date;
@@ -30,11 +28,11 @@ export function isNotNull<T>(value: T): value is Exclude<T, null> {
 }
 
 export function isUndefined(value: unknown): value is undefined {
-  return typeof value === 'undefined';
+  return value === undefined;
 }
 
 export function isNone<T>(value: T): value is Extract<T, undefined | null> {
-  return isNull(value) || isUndefined(value);
+  return value === undefined || value === null;
 }
 
 export function isPresent<T>(value: T): value is Exclude<T, undefined | null> {
