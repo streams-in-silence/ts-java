@@ -124,14 +124,7 @@ export abstract class Comparator<T> {
 }
 
 class ComparatorImpl<T> extends Comparator<T> {
-  readonly #compareFn: CompareFunction<T>;
-
-  constructor(compareFn: CompareFunction<T>) {
+  constructor(public override compare: Comparator<T>['compare']) {
     super();
-    this.#compareFn = compareFn;
-  }
-
-  public override compare(a: T, b: T): number {
-    return this.#compareFn(a, b);
   }
 }
