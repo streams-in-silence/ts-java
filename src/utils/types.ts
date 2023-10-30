@@ -15,3 +15,5 @@ export type ComparableKeyOf<T> = {
 export type ComparableProps<T> = {
   [K in ComparableKeyOf<T>]: T[K];
 };
+
+export type ComparableValueExtractor<T> = (object: T) => ComparableValue;

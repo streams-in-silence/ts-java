@@ -10,15 +10,15 @@ import {
   isString,
 } from './utils/typeguards';
 import {
-  ComparableKeyOf,
   ComparableProps,
   ComparableValue,
+  ComparableValueExtractor,
   CompareFunction,
 } from './utils/types';
 
 export abstract class Comparator<T> {
   public static comparing<T extends ComparableProps<T>>(
-    keyExtractor: (o: ComparableProps<T>) => ComparableValue
+    keyExtractor: ComparableValueExtractor<T>
   ): Comparator<T> {
     return Comparator.#create((a, b) => {
       return Comparator.naturalOrder<ComparableValue>().compare(
@@ -103,7 +103,7 @@ export abstract class Comparator<T> {
   }
 
   public thenComparing(
-    keyOrComparator: ComparableKeyOf<T> | Comparator<T>
+    keyExtractorOrComparator: ComparableValueExtractor<T> | Comparator<T>
   ): Comparator<T> {
     return Comparator.#create((a, b) => {
       const result = this.compare(a, b);
@@ -111,13 +111,13 @@ export abstract class Comparator<T> {
         return result;
       }
 
-      if (keyOrComparator instanceof Comparator) {
-        return keyOrComparator.compare(a, b);
+      if (keyExtractorOrComparator instanceof Comparator) {
+        return keyExtractorOrComparator.compare(a, b);
       }
 
-      return Comparator.naturalOrder().compare(
-        a[keyOrComparator],
-        b[keyOrComparator]
+      return Comparator.naturalOrder<ComparableValue>().compare(
+        keyExtractorOrComparator(a),
+        keyExtractorOrComparator(b)
       );
     });
   }
