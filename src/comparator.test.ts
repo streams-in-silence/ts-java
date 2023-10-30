@@ -237,4 +237,47 @@ describe('Comparator', () => {
       ).toEqual(sorted);
     });
   });
+
+  describe('thenComparing', () => {
+    it('should apply a second comparator when the first comparator returns 0', () => {
+      const AgeComparator = Comparator.comparing<TestComparable>((o) => o.age);
+      const comparator = Comparator.comparing<TestComparable>(
+        (o) => o.name
+      ).thenComparing(AgeComparator);
+
+      const unsorted = [
+        new TestComparable('Bob', 30),
+        new TestComparable('Alice', 20),
+        new TestComparable('Bob', 25),
+      ];
+
+      const sorted = [
+        new TestComparable('Alice', 20),
+        new TestComparable('Bob', 25),
+        new TestComparable('Bob', 30),
+      ];
+
+      expect(unsorted.sort(comparator.compare)).toStrictEqual(sorted);
+    });
+
+    it('should sort by another comparable value based on the key extractor', () => {
+      const comparator = Comparator.comparing<TestComparable>(
+        (o) => o.name
+      ).thenComparing((o) => o.age);
+
+      const unsorted = [
+        new TestComparable('Bob', 30),
+        new TestComparable('Alice', 20),
+        new TestComparable('Bob', 25),
+      ];
+
+      const sorted = [
+        new TestComparable('Alice', 20),
+        new TestComparable('Bob', 25),
+        new TestComparable('Bob', 30),
+      ];
+
+      expect(unsorted.sort(comparator.compare)).toStrictEqual(sorted);
+    });
+  });
 });
