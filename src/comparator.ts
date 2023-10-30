@@ -9,12 +9,22 @@ import {
   isSameType,
   isString,
 } from './utils/typeguards';
-import { ComparableKeyOf, CompareFunction } from './utils/types';
+import {
+  ComparableKeyOf,
+  ComparableProps,
+  ComparableValue,
+  CompareFunction,
+} from './utils/types';
 
 export abstract class Comparator<T> {
-  public static comparing<T>(key: ComparableKeyOf<T>): Comparator<T> {
+  public static comparing<T extends ComparableProps<T>>(
+    keyExtractor: (o: ComparableProps<T>) => ComparableValue
+  ): Comparator<T> {
     return Comparator.#create((a, b) => {
-      return Comparator.naturalOrder().compare(a[key], b[key]);
+      return Comparator.naturalOrder<ComparableValue>().compare(
+        keyExtractor(a),
+        keyExtractor(b)
+      );
     });
   }
 
@@ -83,13 +93,7 @@ export abstract class Comparator<T> {
   }
 
   static #create<T>(compareFn: CompareFunction<T>): Comparator<T> {
-    class Impl extends Comparator<T> {
-      public override compare(a: T, b: T): number {
-        return compareFn(a, b);
-      }
-    }
-
-    return new Impl();
+    return new ComparatorImpl(compareFn);
   }
 
   public abstract compare(a: T, b: T): number;
@@ -116,5 +120,18 @@ export abstract class Comparator<T> {
         b[keyOrComparator]
       );
     });
+  }
+}
+
+class ComparatorImpl<T> extends Comparator<T> {
+  readonly #compareFn: CompareFunction<T>;
+
+  constructor(compareFn: CompareFunction<T>) {
+    super();
+    this.#compareFn = compareFn;
+  }
+
+  public override compare(a: T, b: T): number {
+    return this.#compareFn(a, b);
   }
 }

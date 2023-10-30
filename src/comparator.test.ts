@@ -126,7 +126,7 @@ describe('Comparator', () => {
 
   describe('Comparator.comparing', () => {
     it('should sort by name when comparing by name', () => {
-      const comparator = Comparator.comparing('name');
+      const comparator = Comparator.comparing<TestComparable>((o) => o.name);
 
       const unsorted = [
         new TestComparable('John', 20),
@@ -144,7 +144,7 @@ describe('Comparator', () => {
     });
 
     it('should sort by age when comparing by age', () => {
-      const comparator = Comparator.comparing<TestComparable>('age');
+      const comparator = Comparator.comparing<TestComparable>((o) => o.age);
 
       const unsorted = [
         new TestComparable('Bob', 30),

@@ -12,10 +12,6 @@ export type ComparableKeyOf<T> = {
   [K in keyof T]: T[K] extends ComparableValue ? K : never;
 }[keyof T];
 
-export type ComparableValuesOf<T> = {
-  [K in keyof T]: T[K] extends ComparableValue ? T[K] : never;
-}[keyof T];
-
 export type ComparableProps<T> = {
-  [K in ComparableKeyOf<T>]: ComparableValuesOf<K>;
+  [K in ComparableKeyOf<T>]: T[K];
 };
