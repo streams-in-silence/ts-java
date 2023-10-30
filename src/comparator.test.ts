@@ -163,7 +163,7 @@ describe('Comparator', () => {
   });
 
   describe('Comparator.nullFirst', () => {
-    it('should sort null values first', () => {
+    it('should sort null before numbers', () => {
       const unsorted = [null, 1, 2, null, 3];
       const sorted = [null, null, 1, 2, 3];
 
@@ -172,7 +172,7 @@ describe('Comparator', () => {
       ).toEqual(sorted);
     });
 
-    it('should sort null strings first', () => {
+    it('should sort null before strings', () => {
       const unsorted = [null, 'a', 'b', null, 'c'];
       const sorted = [null, null, 'a', 'b', 'c'];
 
@@ -181,7 +181,16 @@ describe('Comparator', () => {
       ).toEqual(sorted);
     });
 
-    it('should sort null dates first', () => {
+    it('should sort null before booleans', () => {
+      const unsorted = [null, true, false, null, true];
+      const sorted = [null, null, true, true, false];
+
+      expect(
+        unsorted.sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
+      ).toEqual(sorted);
+    });
+
+    it('should sort null before dates', () => {
       const unsorted = [null, new Date(2020), new Date(2022), null];
       const sorted = [null, null, new Date(2020), new Date(2022)];
 
@@ -192,7 +201,7 @@ describe('Comparator', () => {
   });
 
   describe('Comparator.nullLast', () => {
-    it('should sort null values last', () => {
+    it('should sort null after numbers', () => {
       const unsorted = [null, 1, 2, null, 3];
       const sorted = [1, 2, 3, null, null];
 
@@ -201,7 +210,7 @@ describe('Comparator', () => {
       ).toEqual(sorted);
     });
 
-    it('should sort null strings first', () => {
+    it('should sort null after strings', () => {
       const unsorted = [null, 'a', 'b', null, 'c'];
       const sorted = ['a', 'b', 'c', null, null];
 
@@ -210,7 +219,16 @@ describe('Comparator', () => {
       ).toEqual(sorted);
     });
 
-    it('should sort null dates first', () => {
+    it('should sort null after booleans', () => {
+      const unsorted = [null, true, false, null, true];
+      const sorted = [true, true, false, null, null];
+
+      expect(
+        unsorted.sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
+      ).toEqual(sorted);
+    });
+
+    it('should sort null after dates', () => {
       const unsorted = [null, new Date(2020), new Date(2022), null];
       const sorted = [new Date(2020), new Date(2022), null, null];
 
