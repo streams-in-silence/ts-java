@@ -16,7 +16,7 @@ export function isSet<T extends Set<unknown>>(value: unknown): value is T {
 }
 
 export function isObject(value: unknown): value is object {
-  return typeof value === 'object' && isNotNull(value);
+  return typeof value === 'object' && value !== null;
 }
 
 export function isNull(value: unknown): value is null {
@@ -24,7 +24,7 @@ export function isNull(value: unknown): value is null {
 }
 
 export function isNotNull<T>(value: T): value is Exclude<T, null> {
-  return !isNull(value);
+  return value !== null;
 }
 
 export function isUndefined(value: unknown): value is undefined {
@@ -36,7 +36,7 @@ export function isNone<T>(value: T): value is Extract<T, undefined | null> {
 }
 
 export function isPresent<T>(value: T): value is Exclude<T, undefined | null> {
-  return !isNone(value);
+  return value !== undefined && value !== null;
 }
 
 export function isFunction(value: unknown): value is AnyFunction {
@@ -44,16 +44,23 @@ export function isFunction(value: unknown): value is AnyFunction {
 }
 
 export function isNotFunction<T>(value: T): value is Exclude<T, AnyFunction> {
-  return !isFunction(value);
+  return typeof value !== 'function';
 }
 
 export function isComparable<T>(value: unknown): value is Comparable<T> {
-  return isObject(value) && 'compareTo' in value && isFunction(value.compareTo);
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'compareTo' in value &&
+    isFunction(value.compareTo)
+  );
 }
 
 export function isClass(value: unknown): value is { constructor: AnyFunction } {
   return (
-    typeof value === 'object' && value !== null && isFunction(value.constructor)
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.constructor === 'function'
   );
 }
 
