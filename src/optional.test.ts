@@ -32,6 +32,12 @@ describe('Optional', () => {
         new NullPointerException('value must not be null')
       );
     });
+
+    it('should throw a NullPointerException when the parameter is undefined', () => {
+      expect(() => Optional.of(undefined)).toThrow(
+        new NullPointerException('value must not be null')
+      );
+    });
   });
 
   describe('Optional.ofNullable', () => {
@@ -332,7 +338,7 @@ describe('Optional', () => {
 
     it('should call the mapping function with the value when it is present', () => {
       const optional = Optional.of('Test value');
-      const spy = vitest.fn();
+      const spy = vitest.fn(() => 'Other value');
 
       optional.map(spy);
 

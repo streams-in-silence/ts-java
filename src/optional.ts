@@ -1,7 +1,7 @@
 import { NoSuchElementException } from './exceptions/no-such-element.exception';
 import { NullPointerException } from './exceptions/null-pointer.exception';
 import { isEqual } from './utils/is-equal';
-import { isNotFunction, isNotNull, isNull } from './utils/typeguards';
+import { isNotFunction, isNotNull, isNone } from './utils/typeguards';
 
 export class Optional<T> {
   readonly #value: T | null;
@@ -15,14 +15,14 @@ export class Optional<T> {
   }
 
   public static of<T>(value: T): Optional<T> {
-    if (isNull(value)) {
+    if (isNone(value)) {
       throw new NullPointerException('value must not be null');
     }
     return new Optional<T>(value);
   }
 
   public static ofNullable<T>(value: T | null): Optional<T> {
-    if (isNull(value)) {
+    if (isNone(value)) {
       return Optional.empty();
     }
     return Optional.of(value);
@@ -46,7 +46,7 @@ export class Optional<T> {
       throw new NullPointerException('filter must be a function');
     }
 
-    if (isNull(this.#value) || !filter(this.#value)) {
+    if (isNone(this.#value) || !filter(this.#value)) {
       return Optional.empty();
     }
 
@@ -54,7 +54,7 @@ export class Optional<T> {
   }
 
   public flatMap<U>(mapper: (value: T) => Optional<U>): Optional<U> {
-    if (isNull(this.#value)) {
+    if (isNone(this.#value)) {
       return Optional.empty();
     }
 
@@ -72,14 +72,14 @@ export class Optional<T> {
   }
 
   public get(): T {
-    if (isNull(this.#value)) {
+    if (isNone(this.#value)) {
       throw new NoSuchElementException();
     }
     return this.#value;
   }
 
   public ifPresent(action: (value: T) => void): void {
-    if (isNull(this.#value)) {
+    if (isNone(this.#value)) {
       return;
     }
 
@@ -95,7 +95,7 @@ export class Optional<T> {
   }
 
   public map<U>(mapper: (value: T) => U): Optional<U> {
-    if (isNull(this.#value)) {
+    if (isNone(this.#value)) {
       return Optional.empty();
     }
 
