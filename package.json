@@ -1,17 +1,15 @@
 {
-  "name": "ts-java",
-  "private": true,
-  "version": "0.0.0",
-  "description": "TypeScript implementation of some Java classes.",
-  "author": "Massimo Rosin",
+  "name": "@sis/ts-java",
+  "version": "0.0.1",
+  "description": "TypeScript implementation of some select Java classes.",
   "type": "module",
-  "main": "./dist/optional.umd.cjs",
-  "module": "./dist/optional.js",
+  "main": "./dist/ts-java.umd.cjs",
+  "module": "./dist/ts-java.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/optional.js",
-      "require": "./dist/optional.umd.cjs"
+      "import": "./dist/ts-java.js",
+      "require": "./dist/ts-java.umd.cjs"
     }
   },
   "files": [
