@@ -391,12 +391,14 @@ describe('Optional', () => {
     });
 
     it('should throw if the supplier function returns null', () => {
+      const spy = vitest.fn(() => null);
       const optional = Optional.empty();
 
       expect(() => {
         // @ts-expect-error 'or' expects a function that returns an Optional
-        optional.or(() => null);
+        optional.or(spy);
       }).toThrow(NullPointerException);
+      expect(spy).toHaveBeenCalledOnce();
     });
   });
 
@@ -495,11 +497,11 @@ describe('Optional', () => {
     });
 
     it('should throw the error of the exceptionSupplier when a value is missing', () => {
+      const spy = vitest.fn().mockReturnValue(new Error('Custom error'));
       const optional = Optional.empty<string>();
 
-      expect(() =>
-        optional.orElseThrow(() => new Error('Custom error'))
-      ).toThrow('Custom error');
+      expect(() => optional.orElseThrow(spy)).toThrow('Custom error');
+      expect(spy).toHaveBeenCalledOnce();
     });
   });
 
