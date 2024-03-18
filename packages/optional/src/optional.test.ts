@@ -1,6 +1,5 @@
+import { NoSuchElementException, NullPointerException } from '@sis/common';
 import { describe, expect, it, vitest } from 'vitest';
-import { NoSuchElementException } from './exceptions/no-such-element.exception';
-import { NullPointerException } from './exceptions/null-pointer.exception';
 import { Optional } from './optional';
 
 describe('Optional', () => {

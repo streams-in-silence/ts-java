@@ -1,0 +1,31 @@
+{
+  "name": "@sis/ts-comparator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "UNLICENSE.md"
+  ],
+  "scripts": {
+    "build": "tsc && vite build",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.4.0",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.6",
+    "vite-plugin-dts": "^3.7.3",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "@sis/common": "workspace:*",
+    "@sis/typeguards": "workspace:*",
+    "@sis/utils": "workspace:*"
+  }
+}
+

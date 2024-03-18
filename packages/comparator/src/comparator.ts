@@ -1,19 +1,18 @@
-import { NullPointerException } from './exceptions/null-pointer.exception';
+import { NullPointerException } from '@sis/common';
 import {
   isBoolean,
-  isComparable,
   isDate,
   isNull,
   isNumber,
   isPresent,
-  isSameType,
   isString,
-} from './utils/typeguards';
+} from '@sis/typeguards';
+import { isComparable, isSameType } from './typeguards';
 import {
   ComparableProps,
   ComparableValue,
   ComparableValueExtractor,
-} from './utils/types';
+} from './types';
 
 export abstract class Comparator<T> {
   public static comparing<T extends ComparableProps<T>>(

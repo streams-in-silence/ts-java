@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Comparable } from './comparable';
 import { Comparator } from './comparator';
+import { Comparable } from './types';
 
 class TestComparable implements Comparable<TestComparable> {
   constructor(

@@ -6,8 +6,8 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: 'ts-java',
-      fileName: 'ts-java',
+      name: '@sis/ts-comparator',
+      fileName: 'index',
     },
   },
   plugins: [dts()],

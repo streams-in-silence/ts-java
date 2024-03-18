@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@sis/common": ["./packages/common/src/index.ts"],
+      "@sis/ts-comparator": ["./packages/comparator/src/index.ts"],
+      "@sis/ts-optional": ["./packages/optional/src/index.ts"],
+      "@sis/typeguards": ["./packages/typeguards/src/index.ts"],
+      "@sis/utils": ["./packages/utils/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*.ts"]
+}
