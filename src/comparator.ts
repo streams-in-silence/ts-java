@@ -13,14 +13,13 @@ import {
   ComparableProps,
   ComparableValue,
   ComparableValueExtractor,
-  CompareFunction,
 } from './utils/types';
 
 export abstract class Comparator<T> {
   public static comparing<T extends ComparableProps<T>>(
     keyExtractor: ComparableValueExtractor<T>
   ): Comparator<T> {
-    return Comparator.#create((a, b) => {
+    return new Comparator.#Impl((a, b) => {
       return Comparator.naturalOrder<ComparableValue>().compare(
         keyExtractor(a),
         keyExtractor(b)
@@ -29,7 +28,7 @@ export abstract class Comparator<T> {
   }
 
   public static naturalOrder<T>(): Comparator<T> {
-    return Comparator.#create((a, b) => {
+    return new Comparator.#Impl((a, b) => {
       if (isNull(a) || isNull(b)) {
         throw new NullPointerException();
       }
@@ -63,7 +62,7 @@ export abstract class Comparator<T> {
   }
 
   public static nullFirst<U>(comparator: Comparator<U>): Comparator<U> {
-    return Comparator.#create((a, b) => {
+    return new Comparator.#Impl((a, b) => {
       if (isPresent(a) && isPresent(b)) {
         return comparator.compare(a, b);
       }
@@ -78,7 +77,7 @@ export abstract class Comparator<T> {
   }
 
   public static nullLast<U>(comparator: Comparator<U>): Comparator<U> {
-    return Comparator.#create((a, b) => {
+    return new Comparator.#Impl((a, b) => {
       if (isPresent(a) && isPresent(b)) {
         return comparator.compare(a, b);
       }
@@ -92,20 +91,22 @@ export abstract class Comparator<T> {
     });
   }
 
-  static #create<T>(compareFn: CompareFunction<T>): Comparator<T> {
-    return new ComparatorImpl(compareFn);
-  }
+  static readonly #Impl = class ComparatorImpl<T> extends Comparator<T> {
+    constructor(public override compare: Comparator<T>['compare']) {
+      super();
+    }
+  };
 
   public abstract compare(a: T, b: T): number;
 
   public reversed(): Comparator<T> {
-    return Comparator.#create((b, a) => this.compare(a, b));
+    return new Comparator.#Impl((b, a) => this.compare(a, b));
   }
 
   public thenComparing(
     keyExtractorOrComparator: ComparableValueExtractor<T> | Comparator<T>
   ): Comparator<T> {
-    return Comparator.#create((a, b) => {
+    return new Comparator.#Impl((a, b) => {
       const result = this.compare(a, b);
       if (result !== 0) {
         return result;
@@ -120,11 +121,5 @@ export abstract class Comparator<T> {
         keyExtractorOrComparator(b)
       );
     });
-  }
-}
-
-class ComparatorImpl<T> extends Comparator<T> {
-  constructor(public override compare: Comparator<T>['compare']) {
-    super();
   }
 }
