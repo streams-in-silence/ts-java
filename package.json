@@ -3,24 +3,9 @@
   "version": "0.0.1",
   "description": "TypeScript implementation of some select Java classes.",
   "type": "module",
-  "main": "./dist/ts-java.umd.cjs",
-  "module": "./dist/ts-java.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/ts-java.js",
-      "require": "./dist/ts-java.umd.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
+  "private": true,
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "test": "vitest"
+    "preinstall": "npx only-allow pnpm"
   },
   "devDependencies": {
     "@types/node": "^20.11.28",
@@ -29,10 +14,10 @@
     "@vitest/coverage-v8": "^1.4.0",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
+    "turbo": "^1.13.0",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",
     "vite-plugin-dts": "^3.7.3",
     "vitest": "^1.4.0"
   }
 }
-
