@@ -11,8 +11,14 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && vite build",
-    "test": "vitest"
+    "build": "vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc -w"
   },
   "dependencies": {
     "@sis/typeguards": "workspace:*"

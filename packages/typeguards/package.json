@@ -26,10 +26,14 @@
   },
   "repository": "https://github.com/streams-in-silence/type-guard.git",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
-    "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc -w"
   },
   "dependencies": {
     "@sis/common": "workspace:*"

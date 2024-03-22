@@ -3,12 +3,34 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist"]
+      "outputs": ["dist/**"]
     },
+    "dev": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "lint": {},
+    "lint:fix": {},
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "src/**/*.test.ts"]
     },
-    "lint": {}
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts"],
+      "outputs": ["coverage/**"]
+    },
+    "test:watch": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts"],
+      "cache": false
+    },
+    "typecheck": {
+      "inputs": ["src/**/*.ts"]
+    },
+    "typecheck:watch": {
+      "inputs": ["src/**/*.ts"],
+      "cache": false
+    }
   }
 }

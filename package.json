@@ -5,7 +5,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:watch": "turbo run test:watch",
+    "typecheck": "turbo run typecheck",
+    "typecheck:watch": "turbo run typecheck:watch"
   },
   "devDependencies": {
     "@types/node": "^20.11.28",
