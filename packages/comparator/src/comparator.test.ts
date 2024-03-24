@@ -19,21 +19,27 @@ describe('Comparator', () => {
       const unsorted = [5, 3, 1, 4, 2];
       const sorted = [1, 2, 3, 4, 5];
 
-      expect(unsorted.sort(Comparator.naturalOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort strings alphabetically in ascending order', () => {
       const unsorted = ['b', 'c', 'a'];
       const sorted = ['a', 'b', 'c'];
 
-      expect(unsorted.sort(Comparator.naturalOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort booleans in ascending order', () => {
       const unsorted = [true, false, true, false];
       const sorted = [true, true, false, false];
 
-      expect(unsorted.sort(Comparator.naturalOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort Dates in ascending order', () => {
@@ -49,7 +55,9 @@ describe('Comparator', () => {
         new Date('2022-03-01'),
       ];
 
-      expect(unsorted.sort(Comparator.naturalOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort objects that are "comparable" in ascending order', () => {
@@ -65,7 +73,9 @@ describe('Comparator', () => {
         new TestComparable('John', 20),
       ];
 
-      expect(unsorted.sort(Comparator.naturalOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+        sorted
+      );
     });
   });
 
@@ -74,21 +84,27 @@ describe('Comparator', () => {
       const unsorted = [1, 5, 3, 2, 4];
       const sorted = [5, 4, 3, 2, 1];
 
-      expect(unsorted.sort(Comparator.reverseOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort strings alphabetically in descending order', () => {
       const unsorted = ['a', 'c', 'b'];
       const sorted = ['c', 'b', 'a'];
 
-      expect(unsorted.sort(Comparator.reverseOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort booleans in descending order', () => {
       const unsorted = [false, true, false, true];
       const sorted = [false, false, true, true];
 
-      expect(unsorted.sort(Comparator.reverseOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort Dates in descending order', () => {
@@ -104,7 +120,9 @@ describe('Comparator', () => {
         new Date('2022-01-01'),
       ];
 
-      expect(unsorted.sort(Comparator.reverseOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+        sorted
+      );
     });
 
     it('should sort objects that are "comparable" in descending order', () => {
@@ -120,7 +138,9 @@ describe('Comparator', () => {
         new TestComparable('Alice', 25),
       ];
 
-      expect(unsorted.sort(Comparator.reverseOrder().compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+        sorted
+      );
     });
   });
 
@@ -140,7 +160,7 @@ describe('Comparator', () => {
         new TestComparable('John', 20),
       ];
 
-      expect(unsorted.sort(comparator.compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(comparator.compare)).toEqual(sorted);
     });
 
     it('should sort by age when comparing by age', () => {
@@ -158,7 +178,7 @@ describe('Comparator', () => {
         new TestComparable('Bob', 30),
       ];
 
-      expect(unsorted.sort(comparator.compare)).toEqual(sorted);
+      expect(unsorted.slice().sort(comparator.compare)).toEqual(sorted);
     });
   });
 
@@ -168,7 +188,9 @@ describe('Comparator', () => {
       const sorted = [null, null, 1, 2, 3];
 
       expect(
-        unsorted.sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
 
@@ -177,7 +199,9 @@ describe('Comparator', () => {
       const sorted = [null, null, 'a', 'b', 'c'];
 
       expect(
-        unsorted.sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
 
@@ -186,7 +210,9 @@ describe('Comparator', () => {
       const sorted = [null, null, true, true, false];
 
       expect(
-        unsorted.sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
 
@@ -195,7 +221,9 @@ describe('Comparator', () => {
       const sorted = [null, null, new Date(2020), new Date(2022)];
 
       expect(
-        unsorted.sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
   });
@@ -206,7 +234,9 @@ describe('Comparator', () => {
       const sorted = [1, 2, 3, null, null];
 
       expect(
-        unsorted.sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
 
@@ -215,7 +245,9 @@ describe('Comparator', () => {
       const sorted = ['a', 'b', 'c', null, null];
 
       expect(
-        unsorted.sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
 
@@ -224,7 +256,9 @@ describe('Comparator', () => {
       const sorted = [true, true, false, null, null];
 
       expect(
-        unsorted.sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
 
@@ -233,7 +267,9 @@ describe('Comparator', () => {
       const sorted = [new Date(2020), new Date(2022), null, null];
 
       expect(
-        unsorted.sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
+        unsorted
+          .slice()
+          .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
       ).toEqual(sorted);
     });
   });
@@ -257,7 +293,7 @@ describe('Comparator', () => {
         new TestComparable('Bob', 30),
       ];
 
-      expect(unsorted.sort(comparator.compare)).toStrictEqual(sorted);
+      expect(unsorted.slice().sort(comparator.compare)).toStrictEqual(sorted);
     });
 
     it('should sort by another comparable value based on the key extractor', () => {
@@ -277,7 +313,7 @@ describe('Comparator', () => {
         new TestComparable('Bob', 30),
       ];
 
-      expect(unsorted.sort(comparator.compare)).toStrictEqual(sorted);
+      expect(unsorted.slice().sort(comparator.compare)).toStrictEqual(sorted);
     });
   });
 });
