@@ -21,6 +21,5 @@
       "@sis/typeguards": ["./packages/typeguards/src/index.ts"],
       "@sis/utils": ["./packages/utils/src/index.ts"]
     }
-  },
-  "include": ["src/**/*.ts"]
+  }
 }
