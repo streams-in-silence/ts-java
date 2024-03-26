@@ -10,5 +10,5 @@ export default defineConfig({
       fileName: 'index',
     },
   },
-  plugins: [dts()],
+  plugins: [dts({ outDir: ['dist/types'], exclude: ['**/*.test.ts'] })],
 });
