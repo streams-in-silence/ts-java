@@ -1,3 +1,4 @@
+import { NullPointerException } from '@sis/common';
 import { describe, expect, it } from 'vitest';
 import { Comparator } from './comparator';
 import { Comparable } from './types';
@@ -15,6 +16,26 @@ class TestComparable implements Comparable<TestComparable> {
 
 describe('Comparator', () => {
   describe('Comparator.naturalOrder', () => {
+    it('should throw a NullPointerException when one of the values is null', () => {
+      expect(() => Comparator.naturalOrder().compare(null, 1)).toThrowError(
+        NullPointerException
+      );
+    });
+
+    it('should throw an Error when comparing values of different types', () => {
+      expect(() => Comparator.naturalOrder().compare(1, '1')).toThrowError(
+        'Cannot compare objects of different types'
+      );
+    });
+
+    it('should throw an Error when comparing objects that are not comparable', () => {
+      const foo = { bar: 'bar' };
+      const bar = { foo: 'foo' };
+      expect(() => Comparator.naturalOrder().compare(foo, bar)).toThrowError(
+        'Objects must be comparable by natural order'
+      );
+    });
+
     it('should sort numbers in ascending order', () => {
       const unsorted = [5, 3, 1, 4, 2];
       const sorted = [1, 2, 3, 4, 5];
