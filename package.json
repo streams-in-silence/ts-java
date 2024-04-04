@@ -16,16 +16,16 @@
     "typecheck:watch": "turbo run typecheck:watch"
   },
   "devDependencies": {
-    "@types/node": "^20.11.28",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
+    "@types/node": "^20.12.4",
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
     "@vitest/coverage-v8": "^1.4.0",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.13.0",
-    "typescript": "^5.4.2",
-    "vite": "^5.1.6",
-    "vite-plugin-dts": "^3.7.3",
+    "turbo": "^1.13.2",
+    "typescript": "^5.4.4",
+    "vite": "^5.2.8",
+    "vite-plugin-dts": "^3.8.1",
     "vitest": "^1.4.0"
   }
 }
