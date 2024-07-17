@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "TypeScript implementation of some select Java classes.",
   "private": true,
+  "packageManager": "pnpm@9.5.0",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo run build",
@@ -23,7 +24,7 @@
     "@vitest/coverage-v8": "^1.5.0",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.13.2",
+    "turbo": "^2.0.7",
     "typescript": "^5.4.5",
     "vite": "^5.2.9",
     "vite-plugin-dts": "^3.8.3",
