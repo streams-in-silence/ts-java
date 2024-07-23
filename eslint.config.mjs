@@ -22,17 +22,5 @@ export default [
       ...ts.configs['recommended'].rules,
       'no-console': ['error'],
     },
-  },
-  // parser: '@typescript-eslint/parser',
-  // parserOptions: {
-  //   ecmaVersion: 2018,
-  //   sourceType: 'module',
-  //   project: ['./packages/*/tsconfig.json'],
-  //   tsconfigRootDir: import.meta.dirname,
-  // },
-  // extends: [
-  //   'eslint:recommended',
-  //   'plugin:@typescript-eslint/eslint-recommended',
-  //   'plugin:@typescript-eslint/recommended',
-  // ],
+  }
 ];
