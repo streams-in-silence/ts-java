@@ -3,7 +3,5 @@
 {
   "name": "Node.js",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
-  "postAttachCommand": "pnpm config set store-dir ${HOME}/pnpm/.pnpm-store"
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22"
 }
