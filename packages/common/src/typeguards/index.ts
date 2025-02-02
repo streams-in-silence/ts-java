@@ -8,7 +8,7 @@
  * @module typeguards
  */
 
-import { AnyFunction } from '../utils/types';
+import type { AnyFunction } from '../utils/types';
 
 /**
  * Checks if the given input is an array.

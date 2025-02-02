@@ -8,7 +8,7 @@ import {
   isString,
 } from '@ts-java/common/typeguards';
 import { isComparable, isSameType } from './typeguards';
-import {
+import type {
   ComparableProps,
   ComparableValue,
   ComparableValueExtractor,
