@@ -1,4 +1,4 @@
-import type { AnyFunction } from '@sis/common';
+import type { AnyFunction } from '@sis/common/types';
 import { isFunction } from '@sis/typeguards';
 import { Comparable } from './types';
 

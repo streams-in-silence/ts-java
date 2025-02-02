@@ -8,24 +8,10 @@
     "type safe",
     "utility"
   ],
-  "license": "Unlicense",
-  "files": [
-    "dist",
-    "README.md",
-    "UNLICENSE.md"
-  ],
-  "types": "dist/types/index.d.ts",
-  "main": "dist/index.umd.cjs",
-  "module": "dist/index.js",
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.umd.cjs",
-      "types": "./dist/types/index.d.ts"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "vitest run",
@@ -40,8 +26,6 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^2.0.4",
     "typescript": "^5.5.4",
-    "vite": "^5.3.4",
-    "vite-plugin-dts": "^3.9.1",
     "vitest": "^2.0.4"
   }
 }

@@ -8,7 +8,7 @@
  * @module typeguards
  */
 
-import { AnyFunction } from '@sis/common';
+import { AnyFunction } from '@sis/common/types';
 
 /**
  * Checks if the given input is an array.

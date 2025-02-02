@@ -1,4 +1,4 @@
-import { NullPointerException } from '@sis/common';
+import { NullPointerException } from '@sis/common/null-pointer.exception';
 import {
   isBoolean,
   isDate,
