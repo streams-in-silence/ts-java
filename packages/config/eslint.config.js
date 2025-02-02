@@ -4,13 +4,10 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
-    files: ['*.ts'],
+    files: ['src/**/*.ts'],
     ignores: ['*.d.ts'],
     languageOptions: {
       parser: tsParser,
-      parserOptions: {
-        project: ['./packages/*/tsconfig.json', './tsconfig.json'],
-      },
     },
     plugins: {
       '@typescript-eslint': ts,
