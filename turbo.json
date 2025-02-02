@@ -2,61 +2,34 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
     },
     "dev": {
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "cache": false
     },
     "lint": {},
     "lint:fix": {},
     "test": {
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "src/**/*.ts",
-        "src/**/*.test.ts"
-      ]
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts"]
     },
     "test:coverage": {
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "src/**/*.ts",
-        "src/**/*.test.ts"
-      ],
-      "outputs": [
-        "coverage/**"
-      ]
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts"],
+      "outputs": ["coverage/**"]
     },
     "test:watch": {
-      "dependsOn": [
-        "build"
-      ],
-      "inputs": [
-        "src/**/*.ts",
-        "src/**/*.test.ts"
-      ],
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts"],
       "cache": false
     },
     "typecheck": {
-      "inputs": [
-        "src/**/*.ts"
-      ]
+      "inputs": ["src/**/*.ts"]
     },
     "typecheck:watch": {
-      "inputs": [
-        "src/**/*.ts"
-      ],
+      "inputs": ["src/**/*.ts"],
       "cache": false
     }
   }

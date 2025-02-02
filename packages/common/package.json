@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "exports": {
-   "./no-such-element.exception": "./src/no-such-element.exception.ts",
-   "./null-pointer.exception": "./src/null-pointer.exception.ts",
-   "./types": "./src/types.ts"
+    "./no-such-element.exception": "./src/no-such-element.exception.ts",
+    "./null-pointer.exception": "./src/null-pointer.exception.ts",
+    "./types": "./src/types.ts"
   },
   "scripts": {
     "lint": "eslint .",

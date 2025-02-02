@@ -1,9 +1,7 @@
-
 import { NoSuchElementException } from '@sis/common/no-such-element.exception';
 import { NullPointerException } from '@sis/common/null-pointer.exception';
 import { isNone, isNotFunction, isNotNull } from '@sis/typeguards';
 import { isEqual } from '@sis/utils/is-equal';
-
 
 export class Optional<T> {
   readonly #value: T | null;

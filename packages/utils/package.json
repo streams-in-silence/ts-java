@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./is-equal":"./src/is-equal.ts"
+    "./is-equal": "./src/is-equal.ts"
   },
   "scripts": {
     "lint": "eslint .",
