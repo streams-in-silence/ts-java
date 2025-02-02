@@ -1,7 +1,7 @@
-import { NullPointerException } from '@sis/common/exception/null-pointer';
+import { NullPointerException } from '@ts-java/common/exception/null-pointer';
 import { describe, expect, it } from 'vitest';
 import { Comparator } from './comparator';
-import { Comparable } from './types';
+import type { Comparable } from './types';
 
 class TestComparable implements Comparable<TestComparable> {
   constructor(
