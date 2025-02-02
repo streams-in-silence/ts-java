@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      name: '@sis/ts-optional',
+      name: '@ts-java/optional',
       fileName: 'index',
     },
   },

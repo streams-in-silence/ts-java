@@ -1,3 +1,3 @@
-import commonConfig from "@sis/config/eslint.config";
+import commonConfig from "@ts-java/config/eslint.config";
 
 export default [...commonConfig]

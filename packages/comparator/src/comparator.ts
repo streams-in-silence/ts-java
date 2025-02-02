@@ -1,4 +1,4 @@
-import { NullPointerException } from '@sis/common/exception/null-pointer';
+import { NullPointerException } from '@ts-java/common/exception/null-pointer';
 import {
   isBoolean,
   isDate,
@@ -6,7 +6,7 @@ import {
   isNumber,
   isPresent,
   isString,
-} from '@sis/common/typeguards';
+} from '@ts-java/common/typeguards';
 import { isComparable, isSameType } from './typeguards';
 import {
   ComparableProps,

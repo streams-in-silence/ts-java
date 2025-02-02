@@ -1,5 +1,5 @@
-import { isFunction } from '@sis/common/typeguards';
-import type { AnyFunction } from '@sis/common/utils/types';
+import { isFunction } from '@ts-java/common/typeguards';
+import type { AnyFunction } from '@ts-java/common/utils/types';
 import { Comparable } from './types';
 
 export function isComparable<T>(value: unknown): value is Comparable<T> {

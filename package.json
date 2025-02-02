@@ -1,7 +1,6 @@
 {
-  "name": "@sis/ts-java",
-  "version": "0.0.1",
-  "description": "TypeScript implementation of some select Java classes.",
+  "name": "@ts-java/monorepo",
+  "description": "TypeScript implementations of some select Java classes.",
   "private": true,
   "packageManager": "pnpm@9.5.0",
   "scripts": {

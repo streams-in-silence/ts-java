@@ -1,5 +1,5 @@
-import { NoSuchElementException } from '@sis/common/exception/no-such-element';
-import { NullPointerException } from '@sis/common/exception/null-pointer';
+import { NoSuchElementException } from '@ts-java/common/exception/no-such-element';
+import { NullPointerException } from '@ts-java/common/exception/null-pointer';
 import { describe, expect, it, vitest } from 'vitest';
 import { Optional } from './optional';
 

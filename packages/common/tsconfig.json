@@ -1,5 +1,5 @@
 {
-  "extends": "@sis/config/tsconfig.base.json",
+  "extends": "@ts-java/config/tsconfig.base.json",
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "baseUrl": "src"

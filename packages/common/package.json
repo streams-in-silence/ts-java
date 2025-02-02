@@ -1,5 +1,5 @@
 {
-  "name": "@sis/common",
+  "name": "@ts-java/common",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "typecheck:watch": "tsc -w"
   },
   "devDependencies": {
-    "@sis/config": "workspace:*",
+    "@ts-java/config": "workspace:*",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
     "@typescript-eslint/parser": "^8.22.0",
     "@vitest/coverage-v8": "^3.0.4",
