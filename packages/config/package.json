@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "./eslint.config":"./eslint.config.js"
+    "./eslint.config":"./eslint.config.js",
+    "./tsconfig.base.json":"./tsconfig.base.json"
   },
   "description": "Common configuration for this monorepo",
   "keywords": ["eslint", "typescript", "vitest"],

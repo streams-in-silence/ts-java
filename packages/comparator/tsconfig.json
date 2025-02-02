@@ -1,7 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@sis/config/tsconfig.base.json",
   "include": ["src/**/*.ts"],
-  "exclude": ["**/dist**"],
   "compilerOptions": {
     "baseUrl": "src"
   }

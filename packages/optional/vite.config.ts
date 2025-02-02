@@ -10,5 +10,5 @@ export default defineConfig({
       fileName: 'index',
     },
   },
-  plugins: [dts({ outDir: ['dist/types'], exclude: ['**/*.test.ts'] })],
+  plugins: [dts({ tsconfigPath: resolve(__dirname, 'tsconfig.build.json') })],
 });
