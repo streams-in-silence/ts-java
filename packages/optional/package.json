@@ -40,8 +40,6 @@
     "vitest": "^2.0.4"
   },
   "dependencies": {
-    "@sis/common": "workspace:^",
-    "@sis/typeguards": "workspace:^",
-    "@sis/utils": "workspace:^"
+    "@sis/common": "workspace:^"
   }
 }

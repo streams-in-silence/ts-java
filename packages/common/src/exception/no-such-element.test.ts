@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NoSuchElementException } from './no-such-element.exception';
+import { NoSuchElementException } from './no-such-element';
 
 describe('NoSuchElementException', () => {
   it('should have NoSuchElementException as a name', () => {

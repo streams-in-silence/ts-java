@@ -1,5 +1,5 @@
-import type { AnyFunction } from '@sis/common/types';
-import { isFunction } from '@sis/typeguards';
+import { isFunction } from '@sis/common/typeguards';
+import type { AnyFunction } from '@sis/common/utils/types';
 import { Comparable } from './types';
 
 export function isComparable<T>(value: unknown): value is Comparable<T> {

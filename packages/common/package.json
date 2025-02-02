@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./no-such-element.exception": "./src/no-such-element.exception.ts",
-    "./null-pointer.exception": "./src/null-pointer.exception.ts",
-    "./types": "./src/types.ts"
+    "./exception/no-such-element": "./src/exception/no-such-element.ts",
+    "./exception/null-pointer": "./src/exception/null-pointer.ts",
+    "./typeguards": "./src/typeguards/index.ts",
+    "./utils/is-equal": "./src/utils/is-equal.ts",
+    "./utils/types": "./src/utils/types.ts"
   },
   "scripts": {
     "lint": "eslint .",

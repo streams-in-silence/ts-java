@@ -1,5 +1,5 @@
-import { NoSuchElementException } from '@sis/common/no-such-element.exception';
-import { NullPointerException } from '@sis/common/null-pointer.exception';
+import { NoSuchElementException } from '@sis/common/exception/no-such-element';
+import { NullPointerException } from '@sis/common/exception/null-pointer';
 import { describe, expect, it, vitest } from 'vitest';
 import { Optional } from './optional';
 

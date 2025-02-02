@@ -1,4 +1,4 @@
-import { isDate, isFunction, isMap, isObject, isSet } from '@sis/typeguards';
+import { isDate, isFunction, isMap, isObject, isSet } from '../typeguards';
 
 /**
  * Checks if two values are equal.

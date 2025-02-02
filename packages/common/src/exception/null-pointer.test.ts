@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NullPointerException } from './null-pointer.exception';
+import { NullPointerException } from './null-pointer';
 
 describe('NullPointerException', () => {
   it('should have NullPointerException as a name', () => {

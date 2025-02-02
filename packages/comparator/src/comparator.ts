@@ -1,4 +1,4 @@
-import { NullPointerException } from '@sis/common/null-pointer.exception';
+import { NullPointerException } from '@sis/common/exception/null-pointer';
 import {
   isBoolean,
   isDate,
@@ -6,7 +6,7 @@ import {
   isNumber,
   isPresent,
   isString,
-} from '@sis/typeguards';
+} from '@sis/common/typeguards';
 import { isComparable, isSameType } from './typeguards';
 import {
   ComparableProps,

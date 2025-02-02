@@ -1,4 +1,4 @@
-import { NullPointerException } from '@sis/common/null-pointer.exception';
+import { NullPointerException } from '@sis/common/exception/null-pointer';
 import { describe, expect, it } from 'vitest';
 import { Comparator } from './comparator';
 import { Comparable } from './types';
