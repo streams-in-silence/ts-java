@@ -9,8 +9,7 @@ import {
 } from '@ts-java/common/typeguards';
 import { isComparable, isSameType } from './typeguards';
 import type {
-  ComparableValue,
-  ComparableValueExtractor
+  ComparableKeyExtractor
 } from './types';
 
 /**
@@ -24,18 +23,18 @@ import type {
  */
 export abstract class Comparator<T> {
 
-  /**
+  /** 
    * Accepts a function that extracts a comparable value from type T and returns a new Comparator that compares objects by that value.
    * @param keyExtractor 
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function.
    */
   public static comparing<T>(
-    keyExtractor: ComparableValueExtractor<T>
+    keyExtractor: ComparableKeyExtractor<T>
   ): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
-      return Comparator.naturalOrder<ComparableValue>().compare(
-        keyExtractor(a),
-        keyExtractor(b)
+      return Comparator.naturalOrder().compare(
+        a[keyExtractor()],
+        b[keyExtractor()]
       );
     });
   }
@@ -186,20 +185,20 @@ export abstract class Comparator<T> {
     return new Comparator.#Impl((b, a) => this.compare(a, b));
   }
 
+   /**
+   * Returns a lexicographic-order comparator with a function that extracts a comparable value.
+   * If this Comparator considers two elements equal, the next one is used.
+   * @param keyExtractor a function that extracts a comparable value from type T and compares objects by that value in natural order.
+   */
+   public thenComparing(keyExtractor: ComparableKeyExtractor<T>): Comparator<T>;
   /**
    * Returns a lexicographic-order comparator with another comparator. 
    * If this Comparator considers two elements equal, the next one is used.
    * @param other the Comparator to be used if the previous comparison is equal.
    */
   public thenComparing(other: Comparator<T>): Comparator<T>;
-  /**
-   * Returns a lexicographic-order comparator with a function that extracts a comparable value.
-   * If this Comparator considers two elements equal, the next one is used.
-   * @param keyExtractor a function that extracts a comparable value from type T and compares objects by that value in natural order.
-   */
-  public thenComparing(keyExtractor: ComparableValueExtractor<T>): Comparator<T>;
   public thenComparing(
-    keyExtractorOrComparator: ComparableValueExtractor<T> | Comparator<T>
+    keyExtractorOrComparator: ComparableKeyExtractor<T> | Comparator<T>
   ): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       const result = this.compare(a, b);
@@ -210,11 +209,10 @@ export abstract class Comparator<T> {
       if (keyExtractorOrComparator instanceof Comparator) {
         return keyExtractorOrComparator.compare(a, b);
       }
-
-      return Comparator.naturalOrder().compare(
-        keyExtractorOrComparator(a),
-        keyExtractorOrComparator(b)
-      );
+ 
+      return Comparator.comparing(
+        keyExtractorOrComparator,
+      ).compare(a, b);
     });
   }
 }

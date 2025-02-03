@@ -167,7 +167,7 @@ describe('Comparator', () => {
 
   describe('Comparator.comparing', () => {
     it('should sort by name when comparing by name', () => {
-      const comparator = Comparator.comparing<TestComparable>((o) => o.name);
+      const comparator = Comparator.comparing<TestComparable>(() => 'name');
 
       const unsorted = [
         new TestComparable('John', 20),
@@ -185,7 +185,7 @@ describe('Comparator', () => {
     });
 
     it('should sort by age when comparing by age', () => {
-      const comparator = Comparator.comparing<TestComparable>((o) => o.age);
+      const comparator = Comparator.comparing<TestComparable>(() => 'age');
 
       const unsorted = [
         new TestComparable('Bob', 30),
@@ -297,9 +297,9 @@ describe('Comparator', () => {
 
   describe('thenComparing', () => {
     it('should apply a second comparator when the first comparator returns 0', () => {
-      const AgeComparator = Comparator.comparing<TestComparable>((o) => o.age);
+      const AgeComparator = Comparator.comparing<TestComparable>(() => 'age');
       const comparator = Comparator.comparing<TestComparable>(
-        (o) => o.name
+        () => 'name'
       ).thenComparing(AgeComparator);
 
       const unsorted = [
@@ -319,8 +319,8 @@ describe('Comparator', () => {
 
     it('should sort by another comparable value based on the key extractor', () => {
       const comparator = Comparator.comparing<TestComparable>(
-        (o) => o.name
-      ).thenComparing((o) => o.age);
+        () => 'name'
+      ).thenComparing(() => 'age'); 
 
       const unsorted = [
         new TestComparable('Bob', 30),
