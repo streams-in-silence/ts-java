@@ -1,5 +1,5 @@
 import { NullPointerException } from '@ts-java/common/exception/null-pointer';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vitest } from 'vitest';
 import { Comparator } from './comparator';
 import type { Comparable } from './types';
 
@@ -201,6 +201,30 @@ describe('Comparator', () => {
 
       expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
     });
+
+    it('should sort by name using the provided comparator', () =>{
+      const keyComparator = Comparator.reverseOrder<string|number>();
+
+      const spy = vitest.spyOn(keyComparator, 'compare');
+
+      const comparator = Comparator.comparing<TestComparable>(() => 'name', keyComparator);
+
+      const unsorted = [
+        new TestComparable('John', 20),
+        new TestComparable('Alice', 25),
+        new TestComparable('Bob', 30),
+      ];
+
+      const sorted = [
+        new TestComparable('John', 20),
+        new TestComparable('Bob', 30),
+        new TestComparable('Alice', 25),
+      ];
+
+      expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
+
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   describe('Comparator.nullFirst', () => {
@@ -317,7 +341,7 @@ describe('Comparator', () => {
       expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
     });
 
-    it('should sort by another comparable value based on the key extractor', () => {
+    it('should sort by another comparable value in natural order based on the key extractor', () => {
       const comparator = Comparator.comparing<TestComparable>(
         () => 'name'
       ).thenComparing(() => 'age'); 
@@ -335,6 +359,33 @@ describe('Comparator', () => {
       ];
 
       expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
+    });
+
+    it('should sort by another comparable value using the provided comparator based on the key extractor', () => {
+      const keyComparator = Comparator.reverseOrder<string|number>();
+
+      const spy = vitest.spyOn(keyComparator, 'compare');
+
+      // sort first by name and then by age in reverse order
+      const comparator = Comparator.comparing<TestComparable>(
+        () => 'name'
+      ).thenComparing(() => 'age', keyComparator);
+
+      const unsorted = [
+        new TestComparable('Bob', 30),
+        new TestComparable('Alice', 20),
+        new TestComparable('Bob', 25),
+      ];
+
+      const sorted = [
+        new TestComparable('Alice', 20),
+        new TestComparable('Bob', 30),
+        new TestComparable('Bob', 25),
+      ];
+
+      expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
+
+      expect(spy).toHaveBeenCalled();
     });
   });
 });
