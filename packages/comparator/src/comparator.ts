@@ -10,7 +10,8 @@ import {
 } from '@ts-java/common/typeguards';
 import { isComparable, isSameType } from './typeguards';
 import type {
-  ComparableKeyExtractor
+  ComparableKeyExtractor,
+  ComparableKeyOf
 } from './types';
 
 /**
@@ -39,8 +40,8 @@ export abstract class Comparator<T> {
    * @param keyComparator a Comparator that compares the objects by the value extracted by the keyExtractor function.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator.
    */
-  public static comparing<T>(keyExtractor: ComparableKeyExtractor<T>, keyComparator: Comparator<T[ReturnType<ComparableKeyExtractor<T>>]>): Comparator<T>;
-  public static comparing<T>(keyExtractor: ComparableKeyExtractor<T>, keyComparator?: Comparator<T[ReturnType<ComparableKeyExtractor<T>>]>): Comparator<T> {
+  public static comparing<T>(keyExtractor: ComparableKeyExtractor<T>, keyComparator: Comparator<T[ComparableKeyOf<T>]>): Comparator<T>;
+  public static comparing<T>(keyExtractor: ComparableKeyExtractor<T>, keyComparator?: Comparator<T[ComparableKeyOf<T>]>): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       const valueOfA = a[keyExtractor()];
       const valueOfB = b[keyExtractor()];
@@ -225,10 +226,10 @@ export abstract class Comparator<T> {
    * @param keyComparator the Comparator to be used if the previous comparison is equal.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator if the previous comparison is equal.
    */
-  public thenComparing(keyExtractor: ComparableKeyExtractor<T>, keyComparator: Comparator<T[ReturnType<ComparableKeyExtractor<T>>]>): Comparator<T>;
+  public thenComparing(keyExtractor: ComparableKeyExtractor<T>, keyComparator: Comparator<T[ComparableKeyOf<T>]>): Comparator<T>;
   public thenComparing(
     keyExtractorOrComparator: ComparableKeyExtractor<T> | Comparator<T>,
-    keyComparator?: Comparator<T[ReturnType<ComparableKeyExtractor<T>>]>
+    keyComparator?: Comparator<T[ComparableKeyOf<T>]>
   ): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       const result = this.compare(a, b);
