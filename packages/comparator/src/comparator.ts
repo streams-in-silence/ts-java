@@ -31,7 +31,7 @@ export abstract class Comparator<T> {
    * @param keyExtractor a function that extracts a comparable value from type T.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function in natural order.
    */
-  public static comparing<T, U extends ComparableValueOf<T>>(
+  public static comparing<T, U extends ComparableValueOf<T> = ComparableValueOf<T>>(
     keyExtractor: ComparableKeyExtractor<T,U>
   ): Comparator<T>;
   /**
@@ -41,8 +41,8 @@ export abstract class Comparator<T> {
    * @param keyComparator a Comparator that compares the objects by the value extracted by the keyExtractor function.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator.
    */
-  public static comparing<T, U extends ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<U>): Comparator<T>;
-  public static comparing<T, U extends ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator?: Comparator<U>): Comparator<T> {
+  public static comparing<T, U extends ComparableValueOf<T> = ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<U>): Comparator<T>;
+  public static comparing<T, U extends ComparableValueOf<T> = ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator?: Comparator<U>): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       const valueOfA = keyExtractor(a);
       const valueOfB = keyExtractor(b);
@@ -227,8 +227,8 @@ export abstract class Comparator<T> {
    * @param keyComparator the Comparator to be used if the previous comparison is equal.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator if the previous comparison is equal.
    */
-  public thenComparing<U extends ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<T[ComparableKeyOf<T>]>): Comparator<T>;
-  public thenComparing<U extends ComparableValueOf<T>>(
+  public thenComparing<U extends ComparableValueOf<T> = ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<T[ComparableKeyOf<T>]>): Comparator<T>;
+  public thenComparing<U extends ComparableValueOf<T> = ComparableValueOf<T>>(
     keyExtractorOrComparator: ComparableKeyExtractor<T,U> | Comparator<T>,
     keyComparator?: Comparator<T[ComparableKeyOf<T>]>
   ): Comparator<T> {
