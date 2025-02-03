@@ -17,6 +17,7 @@ class TestComparable implements Comparable<TestComparable> {
 describe('Comparator', () => {
   describe('Comparator.naturalOrder', () => {
     it('should throw a NullPointerException when one of the values is null', () => {
+      // @ts-expect-error explicitly testing for invalid null input
       expect(() => Comparator.naturalOrder().compare(null, 1)).toThrowError(
         NullPointerException
       );
@@ -31,6 +32,7 @@ describe('Comparator', () => {
     it('should throw an Error when comparing objects that are not comparable', () => {
       const foo = { bar: 'bar' };
       const bar = { foo: 'foo' };
+      // @ts-expect-error explicitly testing for invalid non-comparable input
       expect(() => Comparator.naturalOrder().compare(foo, bar)).toThrowError(
         'Objects must be comparable by natural order'
       );

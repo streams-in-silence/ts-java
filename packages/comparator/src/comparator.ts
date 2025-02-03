@@ -11,6 +11,7 @@ import {
 import { isComparable, isSameType } from './typeguards';
 import type {
   ComparableKeyExtractor,
+  ComparableValue,
   ComparableValueOf
 } from './types';
 
@@ -72,7 +73,7 @@ export abstract class Comparator<T> {
    * numbers.toSorted(Comparator.naturalOrder().compare); // [1,2,3,4,5]
    * ```
    */
-  public static naturalOrder<T>(): Comparator<T> {
+  public static naturalOrder<T extends ComparableValue = ComparableValue>(): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       if (isNull(a) || isNull(b)) {
         throw new NullPointerException();
@@ -112,7 +113,7 @@ export abstract class Comparator<T> {
    * numbers.toSorted(Comparator.reverseOrder().compare); // [5,4,3,2,1]
    * ```
    */
-  public static reverseOrder<T>(): Comparator<T> {
+  public static reverseOrder<T extends ComparableValue = ComparableValue>(): Comparator<T> {
     return Comparator.naturalOrder<T>().reversed();
   }
 
@@ -130,7 +131,7 @@ export abstract class Comparator<T> {
    * ); // [null,1,2,3,4,5]
    * ```
    */
-  public static nullFirst<U>(comparator: Comparator<U>): Comparator<U> {
+  public static nullFirst<U>(comparator: Comparator<U>): Comparator<U | null> {
     return new Comparator.#Impl((a, b) => {
       if (isPresent(a) && isPresent(b)) {
         return comparator.compare(a, b);
@@ -158,7 +159,7 @@ export abstract class Comparator<T> {
    *  ).compare
    * ); // [1,2,3,4,5,null]
    */
-  public static nullLast<U>(comparator: Comparator<U>): Comparator<U> {
+  public static nullLast<U>(comparator: Comparator<U>): Comparator<U | null> {
     return new Comparator.#Impl((a, b) => {
       if (isPresent(a) && isPresent(b)) {
         return comparator.compare(a, b);
