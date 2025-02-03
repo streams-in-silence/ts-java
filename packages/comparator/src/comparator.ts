@@ -11,7 +11,6 @@ import {
 import { isComparable, isSameType } from './typeguards';
 import type {
   ComparableKeyExtractor,
-  ComparableKeyOf,
   ComparableValueOf
 } from './types';
 
@@ -227,10 +226,10 @@ export abstract class Comparator<T> {
    * @param keyComparator the Comparator to be used if the previous comparison is equal.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator if the previous comparison is equal.
    */
-  public thenComparing<U extends ComparableValueOf<T> = ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<T[ComparableKeyOf<T>]>): Comparator<T>;
-  public thenComparing<U extends ComparableValueOf<T> = ComparableValueOf<T>>(
+  public thenComparing<U extends ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<U>): Comparator<T>;
+  public thenComparing<U extends ComparableValueOf<T>>(
     keyExtractorOrComparator: ComparableKeyExtractor<T,U> | Comparator<T>,
-    keyComparator?: Comparator<T[ComparableKeyOf<T>]>
+    keyComparator?: Comparator<U>
   ): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       const result = this.compare(a, b);

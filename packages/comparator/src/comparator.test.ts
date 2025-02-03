@@ -367,7 +367,7 @@ describe('Comparator', () => {
       const spy = vitest.spyOn(keyComparator, 'compare');
 
       // sort first by name and then by age in reverse order
-      const comparator = Comparator.comparing<TestComparable, string>(
+      const comparator = Comparator.comparing<TestComparable>(
         (o) => o.name
       ).thenComparing((o) => o.age, keyComparator);
 
