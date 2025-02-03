@@ -9,6 +9,7 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
+    "lib": ["ESNext"],
 
     /* Strictness */
     "strict": true,
