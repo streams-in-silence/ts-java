@@ -22,12 +22,19 @@ export type ComparableValue =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Comparable<any> | number | string | boolean | Date;
 
+/**
+ * All possible keys that can be compared used by the keyExtractor.
+ */
 export type ComparableKeyOf<T> = {
   [K in keyof T]: T[K] extends ComparableValue ? K : never;
 }[keyof T];
 
-export type ComparableProps<T> = {
-  [K in ComparableKeyOf<T>]: T[K];
-};
+/**
+ * All possible values that can be returned by the keyExtractor.
+ */
+export type ComparableValueOf<T> = T[ComparableKeyOf<T>];
 
-export type ComparableKeyExtractor<T> = () => ComparableKeyOf<T>;
+/**
+ * A function that extracts a comparable value from an object.
+ */
+export type ComparableKeyExtractor<T, U extends ComparableValueOf<T>> = (object: T) => U;

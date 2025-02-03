@@ -167,7 +167,7 @@ describe('Comparator', () => {
 
   describe('Comparator.comparing', () => {
     it('should sort by name when comparing by name', () => {
-      const comparator = Comparator.comparing<TestComparable>(() => 'name');
+      const comparator = Comparator.comparing<TestComparable, string>((o) => o.name);
 
       const unsorted = [
         new TestComparable('John', 20),
@@ -185,7 +185,7 @@ describe('Comparator', () => {
     });
 
     it('should sort by age when comparing by age', () => {
-      const comparator = Comparator.comparing<TestComparable>(() => 'age');
+      const comparator = Comparator.comparing<TestComparable, number>((o) => o.age);
 
       const unsorted = [
         new TestComparable('Bob', 30),
@@ -203,11 +203,11 @@ describe('Comparator', () => {
     });
 
     it('should sort by name using the provided comparator', () =>{
-      const keyComparator = Comparator.reverseOrder<string|number>();
+      const keyComparator = Comparator.reverseOrder<string>();
 
       const spy = vitest.spyOn(keyComparator, 'compare');
 
-      const comparator = Comparator.comparing<TestComparable>(() => 'name', keyComparator);
+      const comparator = Comparator.comparing<TestComparable, string>((o) => o.name, keyComparator);
 
       const unsorted = [
         new TestComparable('John', 20),
@@ -321,9 +321,9 @@ describe('Comparator', () => {
 
   describe('thenComparing', () => {
     it('should apply a second comparator when the first comparator returns 0', () => {
-      const AgeComparator = Comparator.comparing<TestComparable>(() => 'age');
-      const comparator = Comparator.comparing<TestComparable>(
-        () => 'name'
+      const AgeComparator = Comparator.comparing<TestComparable,number>((o) => o.age);
+      const comparator = Comparator.comparing<TestComparable, string>(
+        (o) => o.name
       ).thenComparing(AgeComparator);
 
       const unsorted = [
@@ -342,9 +342,9 @@ describe('Comparator', () => {
     });
 
     it('should sort by another comparable value in natural order based on the key extractor', () => {
-      const comparator = Comparator.comparing<TestComparable>(
-        () => 'name'
-      ).thenComparing(() => 'age'); 
+      const comparator = Comparator.comparing<TestComparable, string>(
+        (o) => o.name
+      ).thenComparing((o) => o.age); 
 
       const unsorted = [
         new TestComparable('Bob', 30),
@@ -362,14 +362,14 @@ describe('Comparator', () => {
     });
 
     it('should sort by another comparable value using the provided comparator based on the key extractor', () => {
-      const keyComparator = Comparator.reverseOrder<string|number>();
+      const keyComparator = Comparator.reverseOrder<number>();
 
       const spy = vitest.spyOn(keyComparator, 'compare');
 
       // sort first by name and then by age in reverse order
-      const comparator = Comparator.comparing<TestComparable>(
-        () => 'name'
-      ).thenComparing(() => 'age', keyComparator);
+      const comparator = Comparator.comparing<TestComparable, string>(
+        (o) => o.name
+      ).thenComparing((o) => o.age, keyComparator);
 
       const unsorted = [
         new TestComparable('Bob', 30),
