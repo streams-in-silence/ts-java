@@ -40,16 +40,16 @@ describe('Comparator', () => {
       const unsorted = [5, 3, 1, 4, 2];
       const sorted = [1, 2, 3, 4, 5];
 
-      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.naturalOrder().compare)).toStrictEqual(
         sorted
       );
     });
-
+ 
     it('should sort strings alphabetically in ascending order', () => {
       const unsorted = ['b', 'c', 'a'];
       const sorted = ['a', 'b', 'c'];
 
-      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.naturalOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -58,7 +58,7 @@ describe('Comparator', () => {
       const unsorted = [true, false, true, false];
       const sorted = [true, true, false, false];
 
-      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.naturalOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -76,7 +76,7 @@ describe('Comparator', () => {
         new Date('2022-03-01'),
       ];
 
-      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.naturalOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -94,7 +94,7 @@ describe('Comparator', () => {
         new TestComparable('John', 20),
       ];
 
-      expect(unsorted.slice().sort(Comparator.naturalOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.naturalOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -105,7 +105,7 @@ describe('Comparator', () => {
       const unsorted = [1, 5, 3, 2, 4];
       const sorted = [5, 4, 3, 2, 1];
 
-      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.reverseOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -114,7 +114,7 @@ describe('Comparator', () => {
       const unsorted = ['a', 'c', 'b'];
       const sorted = ['c', 'b', 'a'];
 
-      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.reverseOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -123,7 +123,7 @@ describe('Comparator', () => {
       const unsorted = [false, true, false, true];
       const sorted = [false, false, true, true];
 
-      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.reverseOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -141,7 +141,7 @@ describe('Comparator', () => {
         new Date('2022-01-01'),
       ];
 
-      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.reverseOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -159,7 +159,7 @@ describe('Comparator', () => {
         new TestComparable('Alice', 25),
       ];
 
-      expect(unsorted.slice().sort(Comparator.reverseOrder().compare)).toEqual(
+      expect(unsorted.toSorted(Comparator.reverseOrder().compare)).toStrictEqual(
         sorted
       );
     });
@@ -181,7 +181,7 @@ describe('Comparator', () => {
         new TestComparable('John', 20),
       ];
 
-      expect(unsorted.slice().sort(comparator.compare)).toEqual(sorted);
+      expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
     });
 
     it('should sort by age when comparing by age', () => {
@@ -199,7 +199,7 @@ describe('Comparator', () => {
         new TestComparable('Bob', 30),
       ];
 
-      expect(unsorted.slice().sort(comparator.compare)).toEqual(sorted);
+      expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
     });
   });
 
@@ -212,7 +212,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
 
     it('should sort null before strings', () => {
@@ -223,7 +223,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
 
     it('should sort null before booleans', () => {
@@ -234,7 +234,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
 
     it('should sort null before dates', () => {
@@ -245,7 +245,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullFirst(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
   });
 
@@ -258,7 +258,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
 
     it('should sort null after strings', () => {
@@ -269,7 +269,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
 
     it('should sort null after booleans', () => {
@@ -280,7 +280,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
 
     it('should sort null after dates', () => {
@@ -291,7 +291,7 @@ describe('Comparator', () => {
         unsorted
           .slice()
           .sort(Comparator.nullLast(Comparator.naturalOrder()).compare)
-      ).toEqual(sorted);
+      ).toStrictEqual(sorted);
     });
   });
 
@@ -314,7 +314,7 @@ describe('Comparator', () => {
         new TestComparable('Bob', 30),
       ];
 
-      expect(unsorted.slice().sort(comparator.compare)).toStrictEqual(sorted);
+      expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
     });
 
     it('should sort by another comparable value based on the key extractor', () => {
@@ -334,7 +334,7 @@ describe('Comparator', () => {
         new TestComparable('Bob', 30),
       ];
 
-      expect(unsorted.slice().sort(comparator.compare)).toStrictEqual(sorted);
+      expect(unsorted.toSorted(comparator.compare)).toStrictEqual(sorted);
     });
   });
 });
