@@ -14,6 +14,10 @@ export interface Comparable<T> {
 
 export type CompareFunction<T> = (a: T, b: T) => number;
 
+/**
+ * All possible values that can be compared by default.
+ * @see {@link Comparable}
+ */
 export type ComparableValue =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Comparable<any> | number | string | boolean | Date;
