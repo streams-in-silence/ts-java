@@ -27,6 +27,8 @@ jobs:
 
       - name: Enable corepack
         run: corepack enable
+      
+      - name: Enable pnpm
         run: corepack use pnpm@9.5.0
 
       - name: Build
