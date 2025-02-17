@@ -26,6 +26,7 @@ jobs:
           node-version: "22"
 
       - name: Enable corepack
+        run: corepack enable
         run: corepack use pnpm@9.5.0
 
       - name: Build
