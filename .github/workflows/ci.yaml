@@ -1,4 +1,6 @@
 name: CI
+env:
+  COREPACK_DEFAULT_TO_LATEST: 0
 
 on:
   pull_request:
@@ -13,7 +15,7 @@ concurrency:
 jobs:
   ci:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
