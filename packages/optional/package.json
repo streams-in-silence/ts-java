@@ -22,6 +22,7 @@
     "dev": "vite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepublishOnly": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run test",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
