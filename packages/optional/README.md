@@ -1,3 +1,11 @@
-# optional-js
+# `@ts-java/optional`
 
-Implements the Optionals from Java in JavaScript.
+A pure Typescript implementation of Java's `Optional` class.
+
+## Features
+
+## Installation
+
+## Usage
+
+## License
