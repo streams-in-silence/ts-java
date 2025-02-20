@@ -12,7 +12,7 @@ import { isComparable, isSameType } from './typeguards';
 import type {
   ComparableKeyExtractor,
   ComparableValue,
-  ComparableValueOf
+  ComparableValueOf,
 } from './types';
 
 /**
@@ -20,20 +20,20 @@ import type {
  * this has to be implemented as an abstract class.
  * The class has a single abstract method, compare, that must be implemented by the user.
  * In addition to that, it also has a number of static methods that can be used to create new comparators.
- * 
+ *
  * For more information, see the Java documentation.
  * @see https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html
  */
 export abstract class Comparator<T> {
-
-  /** 
+  /**
    * Accepts a function that extracts a comparable value from type T and returns a new Comparator that compares objects by that value in natural order.
    * @param keyExtractor a function that extracts a comparable value from type T.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function in natural order.
    */
-  public static comparing<T, U extends ComparableValueOf<T> = ComparableValueOf<T>>(
-    keyExtractor: ComparableKeyExtractor<T,U>
-  ): Comparator<T>;
+  public static comparing<
+    T,
+    U extends ComparableValueOf<T> = ComparableValueOf<T>,
+  >(keyExtractor: ComparableKeyExtractor<T, U>): Comparator<T>;
   /**
    * Accepts a function that extracts a comparable value from type T and a Comparator that compares objects by that value.
    * Uses the given Comparator to compare the extracted values.
@@ -41,23 +41,29 @@ export abstract class Comparator<T> {
    * @param keyComparator a Comparator that compares the objects by the value extracted by the keyExtractor function.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator.
    */
-  public static comparing<T, U extends ComparableValueOf<T> = ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<U>): Comparator<T>;
-  public static comparing<T, U extends ComparableValueOf<T> = ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator?: Comparator<U>): Comparator<T> {
+  public static comparing<
+    T,
+    U extends ComparableValueOf<T> = ComparableValueOf<T>,
+  >(
+    keyExtractor: ComparableKeyExtractor<T, U>,
+    keyComparator: Comparator<U>
+  ): Comparator<T>;
+  public static comparing<
+    T,
+    U extends ComparableValueOf<T> = ComparableValueOf<T>,
+  >(
+    keyExtractor: ComparableKeyExtractor<T, U>,
+    keyComparator?: Comparator<U>
+  ): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       const valueOfA = keyExtractor(a);
       const valueOfB = keyExtractor(b);
 
-      if(isUndefined(keyComparator)) {
-        return Comparator.naturalOrder().compare(
-          valueOfA,
-          valueOfB
-         );  
+      if (isUndefined(keyComparator)) {
+        return Comparator.naturalOrder().compare(valueOfA, valueOfB);
       }
 
-      return keyComparator.compare(
-        valueOfA,
-        valueOfB
-      );
+      return keyComparator.compare(valueOfA, valueOfB);
     });
   }
 
@@ -66,14 +72,16 @@ export abstract class Comparator<T> {
    * @returns a new Comparator that compares objects by their natural order.
    * @throws a {@link NullPointerException} if either of the objects is null.
    * @throws an Error if the objects are not of the same type or are not comparable by natural order.
-   * 
+   *
    * @example
    * ```typescript
    * const numbers = [1,5,3,2,4];
    * numbers.toSorted(Comparator.naturalOrder().compare); // [1,2,3,4,5]
    * ```
    */
-  public static naturalOrder<T extends ComparableValue = ComparableValue>(): Comparator<T> {
+  public static naturalOrder<
+    T extends ComparableValue = ComparableValue,
+  >(): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
       if (isNull(a) || isNull(b)) {
         throw new NullPointerException();
@@ -105,6 +113,7 @@ export abstract class Comparator<T> {
 
   /**
    * Returns a Comparator that compares {@link ComparableValue Comparable} objects by their reverse order.
+   * This is equivalent to calling `Comparator.naturalOrder().reversed()`.
    * @returns a new Comparator that compares objects by their reverse order.
    * @see {@link Comparator.naturalOrder}
    * @example
@@ -113,7 +122,9 @@ export abstract class Comparator<T> {
    * numbers.toSorted(Comparator.reverseOrder().compare); // [5,4,3,2,1]
    * ```
    */
-  public static reverseOrder<T extends ComparableValue = ComparableValue>(): Comparator<T> {
+  public static reverseOrder<
+    T extends ComparableValue = ComparableValue,
+  >(): Comparator<T> {
     return Comparator.naturalOrder<T>().reversed();
   }
 
@@ -207,14 +218,16 @@ export abstract class Comparator<T> {
     return new Comparator.#Impl((b, a) => this.compare(a, b));
   }
 
-   /**
+  /**
    * Returns a lexicographic-order comparator with a function that extracts a comparable value.
    * If this Comparator considers two elements equal, the next one is used.
    * @param keyExtractor a function that extracts a comparable value from type T and compares objects by that value in natural order if the previous comparison is equal.
    */
-   public thenComparing<U extends ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>): Comparator<T>;
+  public thenComparing<U extends ComparableValueOf<T>>(
+    keyExtractor: ComparableKeyExtractor<T, U>
+  ): Comparator<T>;
   /**
-   * Returns a lexicographic-order comparator with another comparator. 
+   * Returns a lexicographic-order comparator with another comparator.
    * If this Comparator considers two elements equal, the next one is used.
    * @param other the Comparator to be used if the previous comparison is equal.
    * @returns a new Comparator that compares objects using the given Comparator if the previous comparison is equal.
@@ -227,9 +240,12 @@ export abstract class Comparator<T> {
    * @param keyComparator the Comparator to be used if the previous comparison is equal.
    * @returns a new Comparator that compares objects by the value extracted by the keyExtractor function using the given Comparator if the previous comparison is equal.
    */
-  public thenComparing<U extends ComparableValueOf<T>>(keyExtractor: ComparableKeyExtractor<T,U>, keyComparator: Comparator<U>): Comparator<T>;
   public thenComparing<U extends ComparableValueOf<T>>(
-    keyExtractorOrComparator: ComparableKeyExtractor<T,U> | Comparator<T>,
+    keyExtractor: ComparableKeyExtractor<T, U>,
+    keyComparator: Comparator<U>
+  ): Comparator<T>;
+  public thenComparing<U extends ComparableValueOf<T>>(
+    keyExtractorOrComparator: ComparableKeyExtractor<T, U> | Comparator<T>,
     keyComparator?: Comparator<U>
   ): Comparator<T> {
     return new Comparator.#Impl((a, b) => {
@@ -241,11 +257,9 @@ export abstract class Comparator<T> {
       if (keyExtractorOrComparator instanceof Comparator) {
         return keyExtractorOrComparator.compare(a, b);
       }
- 
-      if(isUndefined(keyComparator)) {
-        return Comparator.comparing(
-          keyExtractorOrComparator,
-        ).compare(a, b);
+
+      if (isUndefined(keyComparator)) {
+        return Comparator.comparing(keyExtractorOrComparator).compare(a, b);
       }
 
       return Comparator.comparing(

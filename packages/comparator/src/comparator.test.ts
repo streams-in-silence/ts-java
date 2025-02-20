@@ -67,15 +67,15 @@ describe('Comparator', () => {
 
     it('should sort Dates in ascending order', () => {
       const unsorted: Date[] = [
-        new Date('2022-03-01'),
-        new Date('2022-01-01'),
-        new Date('2022-02-01'),
+        new Date('2025-03-01'),
+        new Date('2025-01-01'),
+        new Date('2025-02-01'),
       ];
 
       const sorted = [
-        new Date('2022-01-01'),
-        new Date('2022-02-01'),
-        new Date('2022-03-01'),
+        new Date('2025-01-01'),
+        new Date('2025-02-01'),
+        new Date('2025-03-01'),
       ];
 
       expect(
