@@ -1,7 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": ["vite/client", "node"]
-  },
-  "files": ["./vite.config.ts", "./vitest.config.ts"]
-}
