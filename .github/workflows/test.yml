@@ -5,9 +5,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "initial-implementation" ]
   pull_request:
-    branches: [ "initial-implementation" ]
 
 jobs:
   build:
