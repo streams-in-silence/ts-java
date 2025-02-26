@@ -4,5 +4,10 @@
   "name": "Node.js",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
-  "postCreateCommand": "pnpm install"
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22.14.0"
+    }
+  },
+  "postCreateCommand": " pnpm install"
 }
