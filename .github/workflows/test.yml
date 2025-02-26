@@ -19,10 +19,20 @@ jobs:
     - name: Use pnpm
       uses: pnpm/action-setup@v4
       with:
-        run_install: |
-          - args: [--frozen-lockfile]
-    - name: Cache for Turbo
+        run_install: false
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.14.0'
+        cache: 'pnpm'
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Setu cache for Turbo
       uses: rharkor/caching-for-turbo@v1.6
+
     - name: Run tests
       run: pnpm test
     
