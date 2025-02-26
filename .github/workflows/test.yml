@@ -21,6 +21,8 @@ jobs:
       with:
         run_install: |
           - args: [--frozen-lockfile]
+    - name: Cache for Turbo
+      uses: rharkor/caching-for-turbo@v1.6
     - name: Run tests
       run: pnpm test
     
