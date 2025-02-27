@@ -1,5 +1,7 @@
 {
   "name": "@ts-java/optional",
+  "description": "A pure Typescript implementation of Java's `Optional` class.",
+  "keywords": ["optional"],
   "version": "1.0.0",
   "type": "module",
   "files": [
@@ -7,7 +9,6 @@
     "README.md",
     "UNLICENSE.md"
   ],
-  "types": "dist/index.d.ts",
   "module": "dist/index.js",
   "main": "dist/index.cjs",
   "exports": {
@@ -42,5 +43,12 @@
   },
   "dependencies": {
     "@ts-java/common": "workspace:^"
+  },
+  "bugs": {
+    "url": "https://github.com/streams-in-silence/ts-java/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:streams-in-silence/ts-java.git"
   }
 }
