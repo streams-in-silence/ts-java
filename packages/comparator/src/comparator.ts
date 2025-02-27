@@ -222,6 +222,7 @@ export abstract class Comparator<T> {
    * Returns a lexicographic-order comparator with a function that extracts a comparable value.
    * If this Comparator considers two elements equal, the next one is used.
    * @param keyExtractor a function that extracts a comparable value from type T and compares objects by that value in natural order if the previous comparison is equal.
+   * @returns a new Comparator that compares objects using the given Comparator if the previous comparison is equal.
    */
   public thenComparing<U extends ComparableValueOf<T>>(
     keyExtractor: ComparableKeyExtractor<T, U>
