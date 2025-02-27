@@ -17,8 +17,8 @@ export default [
       ...eslint.configs.recommended.rules,
       ...ts.configs['eslint-recommended'].rules,
       ...ts.configs['recommended'].rules,
-      "no-dupe-class-members": "off", // handled by @typescript-eslint/no-dupe-class-members
-      "@typescript-eslint/no-dupe-class-members": "error",
+      'no-dupe-class-members': 'off', // handled by @typescript-eslint/no-dupe-class-members
+      '@typescript-eslint/no-dupe-class-members': 'error',
       'no-console': ['error'],
     },
   },

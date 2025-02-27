@@ -37,4 +37,6 @@ export type ComparableValueOf<T> = T[ComparableKeyOf<T>];
 /**
  * A function that extracts a comparable value from an object.
  */
-export type ComparableKeyExtractor<T, U extends ComparableValueOf<T>> = (object: Pick<T, ComparableKeyOf<T>>) => ComparableValue & U;
+export type ComparableKeyExtractor<T, U extends ComparableValueOf<T>> = (
+  object: Pick<T, ComparableKeyOf<T>>
+) => ComparableValue & U;

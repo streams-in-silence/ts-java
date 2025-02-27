@@ -1,8 +1,7 @@
-import { NoSuchElementException } from "@ts-java/common/exception/no-such-element";
-import { NullPointerException } from "@ts-java/common/exception/null-pointer";
-import { isNone, isNotFunction, isNotNull } from "@ts-java/common/typeguards";
-import { isEqual } from "@ts-java/common/utils/is-equal";
-
+import { NoSuchElementException } from '@ts-java/common/exception/no-such-element';
+import { NullPointerException } from '@ts-java/common/exception/null-pointer';
+import { isNone, isNotFunction, isNotNull } from '@ts-java/common/typeguards';
+import { isEqual } from '@ts-java/common/utils/is-equal';
 
 export class Optional<T> {
   readonly #value: T | null;

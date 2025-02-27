@@ -16,26 +16,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 'Checkout repository'
-      uses: actions/checkout@v4
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
 
-    - name: Use pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        run_install: false
+      - name: Use pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
 
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.14.0'
-        cache: 'pnpm'
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.14.0'
+          cache: 'pnpm'
 
-    - name: Install dependencies
-      run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-    - name: Setup cache for Turbo
-      uses: rharkor/caching-for-turbo@v1.6
+      - name: Setup cache for Turbo
+        uses: rharkor/caching-for-turbo@v1.6
 
-    - name: Run tests
-      run: pnpm test
-    
+      - name: Run tests
+        run: pnpm test
