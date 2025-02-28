@@ -43,10 +43,6 @@ importers:
         version: 3.0.7(@types/node@20.14.12)
 
   packages/comparator:
-    dependencies:
-      '@ts-java/common':
-        specifier: workspace:*
-        version: link:../common
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.17.4
@@ -54,6 +50,9 @@ importers:
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.21.0
+      '@ts-java/common':
+        specifier: workspace:*
+        version: link:../common
       '@ts-java/config':
         specifier: workspace:*
         version: link:../config
@@ -95,10 +94,6 @@ importers:
         version: 9.21.0
 
   packages/optional:
-    dependencies:
-      '@ts-java/common':
-        specifier: workspace:^
-        version: link:../common
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.17.4
@@ -106,6 +101,9 @@ importers:
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.21.0
+      '@ts-java/common':
+        specifier: workspace:*
+        version: link:../common
       '@ts-java/config':
         specifier: workspace:*
         version: link:../config
