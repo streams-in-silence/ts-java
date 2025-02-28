@@ -15,7 +15,7 @@ export class Optional<T> {
     return new Optional<T>(value);
   }
 
-  public static ofNullable<T>(value: T | null): Optional<T> {
+  public static ofNullable<T>(value: T | null): Optional<T | null> {
     if (isNone(value)) {
       return Optional.empty();
     }
@@ -71,11 +71,11 @@ export class Optional<T> {
     return optional;
   }
 
-  public get(): T {
+  public get(): NonNullable<T> {
     if (isNone(this.#value)) {
       throw new NoSuchElementException();
     }
-    return this.#value;
+    return this.#value as NonNullable<T>;
   }
 
   public ifPresent(action: (value: T) => void): void {
