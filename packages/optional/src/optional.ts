@@ -4,12 +4,6 @@ import { isNone, isNotFunction, isNotNull } from '@ts-java/common/typeguards';
 import { isEqual } from '@ts-java/common/utils/is-equal';
 
 export class Optional<T> {
-  readonly #value: T | null;
-
-  private constructor(value?: T) {
-    this.#value = value ?? null;
-  }
-
   public static empty<T = null>(): Optional<T> {
     return new Optional<T>();
   }
@@ -26,6 +20,12 @@ export class Optional<T> {
       return Optional.empty();
     }
     return Optional.of(value);
+  }
+
+  readonly #value: T | null;
+
+  private constructor(value?: T) {
+    this.#value = value ?? null;
   }
 
   public equals(other: unknown): boolean {
