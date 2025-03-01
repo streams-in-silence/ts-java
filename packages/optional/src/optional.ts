@@ -5,14 +5,14 @@ import { isEqual } from '@ts-java/common/utils/is-equal';
 
 export class Optional<T> {
   public static empty<T = null>(): Optional<T> {
-    return new Optional<T>();
+    return new Optional();
   }
 
   public static of<T>(value: T): Optional<T> {
     if (isNone(value)) {
       throw new NullPointerException('value must not be null');
     }
-    return new Optional<T>(value);
+    return new Optional(value);
   }
 
   public static ofNullable<T>(value: T | null): Optional<T | null> {
