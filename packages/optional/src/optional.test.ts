@@ -275,6 +275,38 @@ describe('Optional', () => {
     });
   });
 
+  describe('isEmpty', () => {
+    it('should return true when a value is absent', () => {
+      const optional = Optional.empty();
+
+      const result = optional.isEmpty();
+
+      expect(result).toBe(true);
+    });
+
+    it.each([
+      { type: 'array', value: [] },
+      { type: 'object', value: {} },
+      { type: 'string', value: '' },
+      { type: 'NaN', value: NaN },
+      { type: 'zero number', value: 0 },
+    ])('should return false for empty $type', ({ value }) => {
+      const optional = Optional.of(value);
+
+      const result = optional.isEmpty();
+
+      expect(result).toBe(false);
+    });
+
+    it('should return false when a value present', () => {
+      const optional = Optional.of('Test value');
+
+      const result = optional.isEmpty();
+
+      expect(result).toBe(false);
+    });
+  });
+
   describe('isPresent', () => {
     it('should return true when a value is present', () => {
       const optional = Optional.of('Test value');

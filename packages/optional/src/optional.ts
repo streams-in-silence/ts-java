@@ -90,6 +90,10 @@ export class Optional<T> {
     action(this.#value);
   }
 
+  public isEmpty(): boolean {
+    return isNone(this.#value);
+  }
+
   public isPresent(): this is Optional<NonNullable<T>> {
     return isNotNull(this.#value);
   }
