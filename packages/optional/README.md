@@ -1,10 +1,12 @@
 # `@ts-java/optional`
 
-A pure Typescript implementation of Java's `Optional` class.
+A pure Typescript implementation of the Java 8 `Optional` class.
 
 ## Features
 
--
+- full Typescript support
+- provides methods that handle presence/absence of a value (`orElse`, `ifPresent`, etc.)
+- basic implementation of the `equals` and `toString` methods
 
 ## Installation
 
@@ -28,20 +30,22 @@ yarn add @ts-java/optional
 pnpm add @ts-java/optional
 ```
 
-## Examples
+## Usage
 
 ### import
 
 ```typescript
 import { Optional } from '@ts-java/optional';
 
-// or require
+// or with require
 const { Optional } = require('ts-java/optional');
 ```
 
-### `Optional.empty<T>`
+### Creating a new Optional
 
-This will create an empty Optional, meaning that no value is present for it.
+#### `Optional.empty<T>`
+
+This creates an empty Optional, meaning that no value is present for it.
 
 ```typescript
 // not providing a generic type will result in Optional<null>.
@@ -54,7 +58,7 @@ const otherOptional = Optional.empty<string>();
 const stringOptional: Optional<string> = Optional.empty();
 ```
 
-### `Optional.of<T>`
+#### `Optional.of<T>`
 
 Use the `of` method to create a new Optional with the specified value.
 
@@ -67,7 +71,7 @@ Optional.of(null); // throws a NullPointerException
 Optional.of(undefined); // throws a NullPointerException
 ```
 
-### `Optional.ofNullable<T>`
+#### `Optional.ofNullable<T>`
 
 If you do not know if your value might be nullable or not, you can use the `ofNullable` method to avoid a `NullPointerException`. If the value is `null`, it will return an empty Optional.
 
@@ -80,9 +84,11 @@ Optional.ofNullable(null); // Optional<null>;
 Optional.ofNullable(undefined); // Optional<undefined | null>
 ```
 
-### `get`
+### Getting the value of an Optional
 
-Returns the value of the Optional. If the value is for any reason `null`, it will throw a `NoSuchElementException`.
+#### `get`
+
+Returns the value of the Optional. If no value is present (`null`), it will throw a `NoSuchElementException`.
 
 ```typescript
 Optional.of('foo').get(); // returns "foo";
@@ -90,7 +96,7 @@ Optional.of('foo').get(); // returns "foo";
 Optional.ofNullable<string>(null).get(); // throws a NoSuchElementException
 ```
 
-### `isPresent`
+### Handling the absence of a value
 
 To prevent an exception being thrown by the `get` method, you should first check for the presence of the value. It will also exclude `null` from being a potential value (i.e. when using `ofNullable`).
 
@@ -101,18 +107,79 @@ if (optional.isPresent()) {
 }
 ```
 
-### `ifPresent`
+Alternatively, you can use one of the following methods to take care of empty values.
 
-You can invoke a function with the value of the `Optional` if the value is present. Otherwise, it won't be called.
+#### `orElse`
+
+```typescript
+Optional.of('foo').orElse('bar'); // returns "foo";
+Optional.ofNullable<string>(null).orElse('bar'); // returns "bar"
+```
+
+#### `orElseGet`
+
+```typescript
+function getOther(): string {
+  return 'bar';
+}
+
+Optional.of('foo').orElseGet(getOther); // returns "foo";
+Optional.ofNullable<string>(null).orElseGet(getOther); // calls getOther() and returns "bar"
+```
+
+#### `orElseThrow`
+
+```typescript
+Optional.of('foo').orElseThrow(() => new Error('Oops')); // returns "foo";
+Optional.ofNullable<string>(null).orElseThrow(() => new Error('Oops')); // throws the Error
+```
+
+### Transforming the Optional
+
+If you already have an Optional, you can use the following methods to transform/filter it
+
+#### map
+
+Applies the provided mapping function and wraps the transformed value in a new Optional. This does not modify the original value.
+
+```typescript
+const optional = Optional.of(2);
+
+const squared = optional.map((value) => value * value); // returns a new Optional with value=4
+```
+
+#### flatMap
+
+Similar to `map` with the difference that it does not wrap the transformed value in a new Optional. This is because the mapping function must already return an Optional.
+
+```typescript
+const optional = Optional.of(2);
+
+const squared = optional.flatMap((value) => Optional.of(value * value)); // returns a new Optional with value=4
+```
+
+#### filter
+
+Apply a filter on the value of the optional. If the value is present and passes the provided filter check, a new Optional with the value is returned. Otherwise, an empty Optional will be returned.
+
+```typescript
+Optional.of(1).filter((value) => value === 1); // returns a new Optional<number> with value 1
+Optional.of(1).filter((value) => value > 1); // returns an empty Optional<number>
+Optional.ofNullable<number>(null).filter((value) => value === 1); // returns an empty Optional<number>
+```
+
+### Other utility methods
+
+#### `ifPresent`
+
+This will call the provided function only if a value is present.
 
 ```typescript
 Optional.of('foo').ifPresent((value) => console.log(value)); // logs "foo"
 Optional.ofNullable<string>().ifPresent((value) => console.log(value)); // won't be called
 ```
 
-### `equals`
-
-> To keep this package as small as possible, it does not rely on any external library for checking equality. A very crude comparison of key-value between objects is used for this implementation - so use with caution when comparing object-values.
+#### `equals`
 
 Can be used to check if the value of one `Optional` is the same of another.
 
@@ -124,16 +191,67 @@ Optional.of(1).equals(Optional.of(2)); // false
 Optional.of({ foo: 'bar' }).equals(Optional.of({ foo: 'bar' })); // true
 ```
 
-### `filter`
+> To keep this package as small as possible, it does not rely on any external library for checking equality. A very crude comparison of key-value between objects is used for this implementation - so use with caution when comparing object-values.
 
-Apply a filter on the value of the optional. If the value is present and passes the provided filter check, a new Optional with the value is returned. Otherwise, an empty Optional will be returned.
+#### `toString`
 
 ```typescript
-Optional.of(1).filter((value) => value === 1); // returns a new Optional<number> with value 1
-Optional.of(1).filter((value) => value > 1); // returns an empty Optional<number>
-Optional.ofNullable<number>(null).filter((value) => value === 1); // returns an empty Optional<number>
+Optional.of('foo').toString(); // returns Optional['foo']
+Optional.ofNullable(null).toString(); // returns Optional[null]
+```
+
+## Links
+
+- Project homepage: [
+  @ts-java/optional](https://github.com/streams-in-silence/ts-java/tree/main/packages/optional)
+- Repository: [GitHub](https://github.com/streams-in-silence/ts-java)
+- Issue tracker: [GitHub](https://github.com/streams-in-silence/ts-java/issues)
+- Java Documentation: [Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html)
+
+## Contributing
+
+Pull requests are welcome.
+
+- Fork the repository
+- Create your feature branch: `git checkout -b feature/your-feature`
+- Make your changes
+  - Make sure to follow the code style of the project (Prettier and ESLint are configured)
+  - Make sure to add tests for your changes (Vitest is used for testing)
+- Push to the branch
+- Create a new Pull Request
+
+If you have any suggestions, bug reports or questions, feel free to open an issue on GitHub.
+
+### Development
+
+To start developing, clone the repository and install the dependencies using pnpm.
+
+```bash
+pnpm install
+```
+
+### Testing
+
+To run the tests, use the `test` script
+
+```bash
+pnpm test
+```
+
+Or to run the tests in watch mode
+
+```bash
+pnpm test:watch
+```
+
+### Check the types
+
+To check that the types are correct, use the `type-check` script
+
+```bash
+pnpm typecheck
 ```
 
 ## License
 
-This project is licensed under the Unlicense - see the [LICENSE](UNLICENSE.md) file for details.
+This project is licensed under the Unlicense - see the [UNLICENSE](UNLICENSE.md) file for details.

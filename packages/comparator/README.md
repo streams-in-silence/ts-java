@@ -369,4 +369,4 @@ pnpm typecheck
 
 ## License
 
-This project is licensed under the Unlicense - see the [LICENSE](UNLICENSE.md) file for details.
+This project is licensed under the Unlicense - see the [UNLICENSE](UNLICENSE.md) file for details.
