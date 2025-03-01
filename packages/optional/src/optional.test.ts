@@ -69,6 +69,24 @@ describe('Optional', () => {
       expect(result).toBe(true);
     });
 
+    it('should return true when both values are empty', () => {
+      const a = Optional.empty();
+      const b = Optional.empty();
+
+      const result = a.equals(b);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when the other object is not an Optional', () => {
+      const a = Optional.empty();
+      const b: unknown[] = [];
+
+      const result = a.equals(b);
+
+      expect(result).toBe(false);
+    });
+
     it('should return false when the value of another optional is different', () => {
       const a = Optional.of('Test value');
       const b = Optional.of('Different value');
@@ -428,6 +446,16 @@ describe('Optional', () => {
 
       expect(() => {
         // @ts-expect-error 'or' expects a function that returns an Optional
+        optional.or(spy);
+      }).toThrow(NullPointerException);
+      expect(spy).toHaveBeenCalledOnce();
+    });
+
+    it('should throw if the supplier function returns an empty Optional', () => {
+      const spy = vitest.fn(() => Optional.empty<string>());
+      const optional = Optional.empty<string>();
+
+      expect(() => {
         optional.or(spy);
       }).toThrow(NullPointerException);
       expect(spy).toHaveBeenCalledOnce();
