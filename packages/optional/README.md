@@ -88,6 +88,10 @@ Optional.ofNullable(undefined); // Optional<undefined | null>
 
 #### `get`
 
+> The preferred alternative to this method is [orElseThrow](#orElseThrow), which was introduced only later in Java 10 (compared to `get`, which was available since Java 8).
+>
+> The `get` method was kept in this package for the sake of completeness.
+
 Returns the value of the Optional. If no value is present (`null`), it will throw a `NoSuchElementException`.
 
 ```typescript
@@ -96,14 +100,31 @@ Optional.of('foo').get(); // returns "foo";
 Optional.ofNullable<string>(null).get(); // throws a NoSuchElementException
 ```
 
+#### `orElseThrow()`
+
+Returns the value of the Optional. If no value is present (`null`), it will throw a `NoSuchElementException`.
+
+```typescript
+Optional.of('foo').orElseThrow(); // returns "foo";
+
+Optional.ofNullable<string>(null).orElseThrow(); // throws a NoSuchElementException
+```
+
+In the Java counterpart, an overload of this method is available where it is possible to provide a custom `exceptionSupplier`. You can also do this with this package.
+
+```typescript
+Optional.of('foo').orElseThrow(() => new Error('Oops')); // returns "foo";
+Optional.ofNullable<string>(null).orElseThrow(() => new Error('Oops')); // throws the Error
+```
+
 ### Handling the absence of a value
 
-To prevent an exception being thrown by the `get` method, you should first check for the presence of the value. It will also exclude `null` from being a potential value (i.e. when using `ofNullable`).
+To prevent an exception being thrown by the `get` methods, you should first check for the presence of the value. It will also exclude `null` from being a potential value (i.e. when using `ofNullable`).
 
 ```typescript
 const optional = Optional.ofNullable<string>('foo'); // Optional<string | null>
 if (optional.isPresent()) {
-  optional.get().toUpperCase(); // optional will be Optional<string>
+  optional.orElseThrow().toUpperCase(); // optional will be Optional<string>
 }
 ```
 
@@ -125,13 +146,6 @@ function getOther(): string {
 
 Optional.of('foo').orElseGet(getOther); // returns "foo";
 Optional.ofNullable<string>(null).orElseGet(getOther); // calls getOther() and returns "bar"
-```
-
-#### `orElseThrow`
-
-```typescript
-Optional.of('foo').orElseThrow(() => new Error('Oops')); // returns "foo";
-Optional.ofNullable<string>(null).orElseThrow(() => new Error('Oops')); // throws the Error
 ```
 
 ### Transforming the Optional
@@ -170,13 +184,48 @@ Optional.ofNullable<number>(null).filter((value) => value === 1); // returns an 
 
 ### Other utility methods
 
+#### `isPresent`
+
+This indicates if the Optional has a value. Also acts as typeguard and eliminates `null` as potential value.
+
+```typescript
+const optional = Optional.ofNullable<string>(null); // Optional<string | null>
+if (optional.isPresent()) {
+  optional.orElseThrow(); // will not throw an error
+}
+```
+
+#### `isEmpty`
+
+Indicates that the value of the Optional is absent. Unlike `isPresent`, this does not act as a typeguard.
+
+```typescript
+const optional = Optional.ofNullable<string>(null); // Optional<string | null>
+if (optional.isEmpty()) {
+  optional.orElseThrow(); // will definitely throw an error
+}
+```
+
 #### `ifPresent`
 
 This will call the provided function only if a value is present.
 
 ```typescript
-Optional.of('foo').ifPresent((value) => console.log(value)); // logs "foo"
+Optional.of('foo').ifPresent((value) => console.log(value)); // logs 'foo'
 Optional.ofNullable<string>().ifPresent((value) => console.log(value)); // won't be called
+```
+
+#### `ifPresentOrElse`
+
+This will call the provided function with the value, if it is present.
+If the value is absent, it will call the other function instead.
+
+```typescript
+const action = (value) => console.log(value);
+const emptyAction = () => console.log('bar');
+
+Optional.of('foo').ifPresentOrElse(action, emptyAction); // logs 'foo'
+Optional.ofNullable<string>().ifPresentOrElse(action, emptyAction); // logs 'bar'
 ```
 
 #### `equals`
