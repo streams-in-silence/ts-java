@@ -91,7 +91,7 @@ export class Optional<T> {
       return false;
     }
 
-    return isEqual(this.get(), other.get());
+    return isEqual(this.orElseThrow(), other.orElseThrow());
   }
 
   /**
@@ -349,7 +349,7 @@ export class Optional<T> {
    */
   public toString(): string {
     if (this.isPresent()) {
-      return `Optional[${this.get()}]`;
+      return `Optional[${this.orElseThrow()}]`;
     }
     return `Optional[null]`;
   }
