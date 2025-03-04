@@ -9,5 +9,10 @@
       "version": "22.14.0"
     }
   },
+  "customizations": {
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode", "vitest.explorer"]
+    }
+  },
   "postCreateCommand": " pnpm install"
 }
