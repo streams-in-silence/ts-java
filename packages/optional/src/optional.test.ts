@@ -293,6 +293,50 @@ describe('Optional', () => {
     });
   });
 
+  describe('ifPresentOrElse', () => {
+    it('should apply the action when a value is present', () => {
+      const optional = Optional.of('Test value');
+      const action = vitest.fn();
+      const emptyAction = vitest.fn();
+
+      optional.ifPresentOrElse(action, emptyAction);
+
+      expect(action).toHaveBeenCalledWith('Test value');
+    });
+
+    it('should throw a NullPointerException when the value is present and the action function is not provided', () => {
+      const optional = Optional.of('Test value');
+      const action = null;
+      const emptyAction = vitest.fn();
+
+      // @ts-expect-error 'ifPresentOrElse' expects a action to be a function
+      expect(() => optional.ifPresentOrElse(action, emptyAction)).toThrow(
+        new NullPointerException('action must be a function')
+      );
+    });
+
+    it('should apply the emptyAction when the value is missing', () => {
+      const optional = Optional.empty();
+      const action = vitest.fn();
+      const emptyAction = vitest.fn();
+
+      optional.ifPresentOrElse(action, emptyAction);
+
+      expect(emptyAction).toHaveBeenCalled();
+    });
+
+    it('should throw a NullPointerException when the value is absent and the emptyAction function is not provided', () => {
+      const optional = Optional.empty();
+      const action = vitest.fn();
+      const emptyAction = null;
+
+      // @ts-expect-error 'ifPresentOrElse' expects emptyAction to be a function
+      expect(() => optional.ifPresentOrElse(action, emptyAction)).toThrow(
+        new NullPointerException('emptyAction must be a function')
+      );
+    });
+  });
+
   describe('isEmpty', () => {
     it('should return true when a value is absent', () => {
       const optional = Optional.empty();

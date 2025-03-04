@@ -174,6 +174,30 @@ export class Optional<T> {
   }
 
   /**
+   * If a value is present, the provided action will be invoked with the value.
+   * Otherwise, the emptyAction will be invoked.
+   * @param action the method to be invoked if a value is present.
+   * @param emptyAction the method to be invoked if the value is absent.
+   * @throws a {@link NullPointerException} if a value is present and the provided `action` is not a function
+   * @throws a {@link NullPointerException} if a value is absent and the provided `emptyAction` is not a function
+   */
+  public ifPresentOrElse(action: (value: T) => void, emptyAction: () => void) {
+    if (isNone(this.#value)) {
+      if (isNotFunction(emptyAction)) {
+        throw new NullPointerException('emptyAction must be a function');
+      }
+      emptyAction();
+      return;
+    }
+
+    if (isNotFunction(action)) {
+      throw new NullPointerException('action must be a function');
+    }
+
+    action(this.#value);
+  }
+
+  /**
    * Indicates the absence of a value.
    *
    * @returns `true` if the value is absent, `false` otherwise
