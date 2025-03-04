@@ -1,6 +1,11 @@
 import { NoSuchElementException } from '@ts-java/common/exception/no-such-element';
 import { NullPointerException } from '@ts-java/common/exception/null-pointer';
-import { isNone, isNotFunction, isNotNull } from '@ts-java/common/typeguards';
+import {
+  isFunction,
+  isNone,
+  isNotFunction,
+  isNotNull,
+} from '@ts-java/common/typeguards';
 import { isEqual } from '@ts-java/common/utils/is-equal';
 
 /**
@@ -141,17 +146,16 @@ export class Optional<T> {
   /**
    * If the value is present in this Optional, returns the value.
    * Otherwise, a {@link NoSuchElementException} is thrown.
+   * > API Note: The preferred alternative to this method is {@link orElseThrow()}
    *
    * @returns the non-null value of this Optional
    * @throws a {@link NoSuchElementException} if the value is absent.
    * @template T
    * @see {@link Optional.isPresent}
+   * @alias {@link orElseThrow}
    */
   public get(): NonNullable<T> {
-    if (isNone(this.#value)) {
-      throw new NoSuchElementException();
-    }
-    return this.#value as NonNullable<T>;
+    return this.orElseThrow();
   }
 
   /**
@@ -300,22 +304,42 @@ export class Optional<T> {
 
   /**
    * If a value is present, it will be returned.
+   * Otherwise, a {@link NoSuchElementException} is thrown.
+   *
+   * @returns the non-null value of this Optional
+   * @throws a {@link NoSuchElementException} if the value is absent.
+   * @template T
+   * @see {@link Optional.isPresent}
+   * @see {@link Optional.get}
+   */
+  public orElseThrow(): NonNullable<T>;
+  /**
+   * If a value is present, it will be returned.
    * Otherwise, the provided `exceptionSupplier` will be invoked to get the Error that should be thrown.
    *
    * @param supplier a function that returns the Error that should be thrown if this Optional is empty.
-   * @returns the value or throws the Error of the `exceptionSupplier` if the value is not present.
-   * @throws a {@link NullPointerException} if the value is not present and the provided `exceptionSupplier` is not a function
+   * @returns the non-null value of this Optional
+   * @throws
+   * > Due to how Typescript overloads work, this method will not throw a NullPointerException if the `exceptionSupplier` is not provided
    */
-  public orElseThrow(exceptionSupplier: () => Error): T {
+  public orElseThrow<E extends Error>(
+    exceptionSupplier: () => E
+  ): NonNullable<T>;
+  /**
+   * @inheritdoc
+   */
+  public orElseThrow<E extends Error>(
+    exceptionSupplier?: () => E
+  ): NonNullable<T> {
     if (isNotNull(this.#value)) {
-      return this.#value;
+      return this.#value as NonNullable<T>;
     }
 
-    if (isNotFunction(exceptionSupplier)) {
-      throw new NullPointerException('exceptionSupplier must be a function');
+    if (isFunction(exceptionSupplier)) {
+      throw exceptionSupplier();
     }
 
-    throw exceptionSupplier();
+    throw new NoSuchElementException();
   }
 
   /**

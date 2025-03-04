@@ -583,12 +583,12 @@ describe('Optional', () => {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should throw a NullPointerException when the exceptionSupplier is not provided', () => {
+    it('should throw a NoSuchElementException when the value is absent and the exceptionSupplier is not provided', () => {
       const optional = Optional.empty();
 
       // @ts-expect-error 'orElseThrow' expects a function
       expect(() => optional.orElseThrow(null)).toThrow(
-        new NullPointerException('exceptionSupplier must be a function')
+        new NoSuchElementException()
       );
     });
 
