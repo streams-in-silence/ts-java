@@ -279,6 +279,8 @@ To start developing, clone the repository and install the dependencies using pnp
 pnpm install
 ```
 
+Alternatively, you can also clone this repository into a devcontainer which will automatically run `pnpm install` so you can get started even faster.
+
 ### Testing
 
 To run the tests, use the `test` script
