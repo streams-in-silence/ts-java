@@ -1,0 +1,24 @@
+{
+  "name": "@ts-java/config",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./eslint.config": "./eslint.config.js",
+    "./tsconfig.base.json": "./tsconfig.base.json"
+  },
+  "description": "Common configuration for this monorepo",
+  "keywords": [
+    "eslint",
+    "typescript",
+    "vitest"
+  ],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "eslint": "^9.21.0"
+  }
+}
