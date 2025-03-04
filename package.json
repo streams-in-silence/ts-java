@@ -18,7 +18,7 @@
     "typecheck:watch": "turbo run typecheck:watch"
   },
   "devDependencies": {
-    "prettier": "^3.5.2",
+    "prettier": "^3.5.3",
     "turbo": "^2.4.4"
   }
 }
