@@ -21,11 +21,15 @@
     ".": {
       "import": "./dist/index.js",
       "default": "./dist/index.cjs"
+    },
+    "./string": {
+      "import": "./dist/string.comparator.js",
+      "default": "./dist/string.comparator.cjs"
     }
   },
   "scripts": {
     "build": "tsup",
-    "check-package": "attw --pack .",
+    "check-package": "attw --pack . --profile node16",
     "dev": "vitest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

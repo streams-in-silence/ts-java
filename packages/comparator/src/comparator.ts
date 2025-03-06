@@ -88,7 +88,7 @@ export abstract class Comparator<T> {
       }
 
       if (!isSameType(a, b) || !isSameType(b, a)) {
-        throw new Error('Cannot compare objects of different types');
+        throw new TypeError('Cannot compare objects of different types');
       }
 
       if (isString(a) && isString(b)) {
@@ -107,7 +107,7 @@ export abstract class Comparator<T> {
         return a.compareTo(b);
       }
 
-      throw new Error('Objects must be comparable by natural order');
+      throw new TypeError('Objects must be comparable by natural order');
     });
   }
 
@@ -200,6 +200,8 @@ export abstract class Comparator<T> {
    * @param a the first object to be compared.
    * @param b the second object to be compared.
    * @returns a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
+   * @throws a {@link NullPointerException} if one of the values is null and this comparator does not permit null arguments
+   * @throws a {@link TypeError} if the arguments' types prevent them from being compared by this comparator
    */
   public abstract compare(a: T, b: T): number;
 
