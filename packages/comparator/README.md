@@ -7,6 +7,7 @@ This package provides an abstract class that can be extended to create a custom 
 ## Features
 
 - Easily sort arrays of `string`, `number`, `boolean` and `Date` elements
+- Predefined `CASE_INSENSITIVE_ORDER` comparator for comparing `strings` in lexographical order, ignoring case differences
 - Allow your classes or objects to be sorted by implementing the `Comparable<T>` interface
 - Chain multiple sorting criteria to get a more refined sorting result
 - Define where you want `null` values to be placed in the sorted array
