@@ -1,6 +1,6 @@
 # `@ts-java/optional`
 
-A pure Typescript implementation of the Java 8 `Optional` class.
+A pure Typescript implementation of the Java's `Optional` class.
 
 ## Features
 
@@ -255,7 +255,7 @@ Optional.ofNullable(null).toString(); // returns Optional[null]
   @ts-java/optional](https://github.com/streams-in-silence/ts-java/tree/main/packages/optional)
 - Repository: [GitHub](https://github.com/streams-in-silence/ts-java)
 - Issue tracker: [GitHub](https://github.com/streams-in-silence/ts-java/issues)
-- Java Documentation: [Optional](https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html)
+- Java Documentation: [Optional](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html)
 
 ## Contributing
 
