@@ -25,6 +25,10 @@
     "./string": {
       "import": "./dist/string.comparator.js",
       "default": "./dist/string.comparator.cjs"
+    },
+    "./patch": {
+      "import": "./dist/patches.js",
+      "default": "./dist/patches.cjs"
     }
   },
   "scripts": {

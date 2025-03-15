@@ -12,6 +12,7 @@ This package provides an abstract class that can be extended to create a custom 
 - Chain multiple sorting criteria to get a more refined sorting result
 - Define where you want `null` values to be placed in the sorted array
 - Create your own `Comparator` implementation to re-use the same sorting logic across multiple places
+- Opt-in `Array.prototype.sort` and `Array.prototype.toSorted` method and type overrides to pass in `Comparator` instances as valid arguments
 
 ## Installation
 
@@ -314,6 +315,53 @@ console.log(numbers); // [null, 1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]
 numbers.sort(Comparator.nullsLast(Comparator.naturalOrder()).compare);
 
 console.log(numbers); // [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9, null]
+```
+
+## Override native Array `sort` and `toSorted` methods
+
+> **Word of warning**: Even though this package provides an easy way of enabling a Java-like way of using `Comparator` instances inside the `sort` and `toSorted` method, it is **highly discouraged** to use it as it is usually considered bad-practice to modify prototype methods of the native JavaScript implementations.
+
+### `patchArray`
+
+Importing from `'ts-java/comparator/patch'` will also implicitly add another type overload for the `Array.sort` and `Array.toSorted` methods so Typescript won't complain if you then pass in a `Comparator` instance to these methods.
+
+```typescript
+// ideally import this method somewhere in the root of your application
+import { patchArray } from '@ts-java/comparator/patch';
+
+patchArray();
+
+const numbers = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
+
+// now you can simply pass in a Comparator instance
+numbers.sort(Comparator.naturalOrder());
+
+console.log(numbers); // [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]
+```
+
+### `revertPatchArray`
+
+This method can be used to revert the changes done to the `Array.sort` and `Array.toSorted` methods by the `patchArray`.
+
+> This will **not** remove the changes done to the Array interface in Typescript. For this you should consider if you want to import the patch in the first place.
+
+```typescript
+// ideally import this method somewhere in the root of your application
+import { patchArray, revertPatchArray } from '@ts-java/comparator/patch';
+
+patchArray();
+
+const numbers = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5];
+
+// will work fine
+numbers.sort(Comparator.naturalOrder());
+
+revertPatchArray();
+
+// Typescript won't complain
+numbers.sort(Comparator.reverseOrder()); // this will now again behave like the original implementation and throw a TypeError
+
+numbers.sort(Comparator.reverseOrder().compare); // works just fine
 ```
 
 ## Links
