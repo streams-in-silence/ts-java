@@ -4,7 +4,7 @@
   "keywords": [
     "optional"
   ],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "files": [
     "dist",
@@ -44,6 +44,9 @@
     "tsup": "^8.4.0",
     "typescript": "^5.8.2",
     "vitest": "^3.0.7"
+  },
+  "peerDependencies": {
+    "es-toolkit": "^1"
   },
   "bugs": {
     "url": "https://github.com/streams-in-silence/ts-java/issues"

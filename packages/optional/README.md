@@ -240,8 +240,6 @@ Optional.of(1).equals(Optional.of(2)); // false
 Optional.of({ foo: 'bar' }).equals(Optional.of({ foo: 'bar' })); // true
 ```
 
-> To keep this package as small as possible, it does not rely on any external library for checking equality. A very crude comparison of key-value between objects is used for this implementation - so use with caution when comparing object-values.
-
 #### `toString`
 
 ```typescript
