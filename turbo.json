@@ -11,10 +11,15 @@
     },
     "dev": {
       "dependsOn": ["build"],
-      "cache": false
+      "cache": false,
+      "persistent": true
     },
-    "lint": {},
-    "lint:fix": {},
+    "lint": {
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts", "eslint.config.js"]
+    },
+    "lint:fix": {
+      "inputs": ["src/**/*.ts", "src/**/*.test.ts", "eslint.config.js"]
+    },
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "src/**/*.test.ts"]
@@ -27,14 +32,16 @@
     "test:watch": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "src/**/*.test.ts"],
-      "cache": false
+      "cache": false,
+      "persistent": true
     },
     "typecheck": {
       "inputs": ["src/**/*.ts"]
     },
     "typecheck:watch": {
       "inputs": ["src/**/*.ts"],
-      "cache": false
+      "cache": false,
+      "persistent": true
     }
   }
 }
