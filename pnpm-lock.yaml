@@ -94,6 +94,10 @@ importers:
         version: 9.21.0
 
   packages/optional:
+    dependencies:
+      es-toolkit:
+        specifier: ^1
+        version: 1.33.0
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.17.4
@@ -849,6 +853,9 @@ packages:
 
   es-module-lexer@1.6.0:
     resolution: {integrity: sha512-qqnD1yMU6tk/jnaMosogGySTZP8YtUgAffA9nMN+E/rjxcfRQ6IEk7IiozUjgxKoFHBGjTLnrHB/YC45r/59EQ==}
+
+  es-toolkit@1.33.0:
+    resolution: {integrity: sha512-X13Q/ZSc+vsO1q600bvNK4bxgXMkHcf//RxCmYDaRY5DAcT+eoXjY5hoAPGMdRnWQjvyLEcyauG3b6hz76LNqg==}
 
   esbuild@0.25.0:
     resolution: {integrity: sha512-BXq5mqc8ltbaN34cDqWuYKyNhX8D/Z0J1xdtdQ8UcIIIyJyz+ZMKUt58tF3SrZ85jcfN/PZYhjR5uDQAYNVbuw==}
@@ -2385,6 +2392,8 @@ snapshots:
   environment@1.1.0: {}
 
   es-module-lexer@1.6.0: {}
+
+  es-toolkit@1.33.0: {}
 
   esbuild@0.25.0:
     optionalDependencies:

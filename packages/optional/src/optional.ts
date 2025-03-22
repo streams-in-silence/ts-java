@@ -6,7 +6,7 @@ import {
   isNotFunction,
   isNotNull,
 } from '@ts-java/common/typeguards';
-import { isEqual } from '@ts-java/common/utils/is-equal';
+import { isEqual } from 'es-toolkit';
 
 /**
  * @typedef {(value: T) => boolean} Predicate
