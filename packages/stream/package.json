@@ -1,0 +1,59 @@
+{
+  "name": "@ts-java/stream",
+  "description": "A pure Typescript implementation of the Java `stream` functional interface.",
+  "keywords": [
+    "sorting",
+    "comparator",
+    "comparing",
+    "comparable"
+  ],
+  "version": "1.1.0",
+  "type": "module",
+  "files": [
+    "package.json",
+    "dist",
+    "README.md",
+    "UNLICENSE.md"
+  ],
+  "module": "dist/index.js",
+  "main": "dist/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "check-package": "attw --pack . --profile node16",
+    "dev": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepublishOnly": "pnpm run build && pnpm run typecheck && pnpm run lint && pnpm run test",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc",
+    "typecheck:watch": "tsc -w"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
+    "@eslint/js": "^9.21.0",
+    "@ts-java/common": "workspace:*",
+    "@ts-java/config": "workspace:*",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
+    "@vitest/coverage-v8": "^3.0.7",
+    "eslint": "^9.21.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.7"
+  },
+  "bugs": {
+    "url": "https://github.com/streams-in-silence/ts-java/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:streams-in-silence/ts-java.git"
+  }
+}
