@@ -20,7 +20,7 @@ import type { AnyFunction } from '../utils/types';
  * const arr = [1, 2, 3];
  * isArray(arr); // true
  */
-export function isArray(input: unknown): input is unknown[] {
+export function isArray<T>(input: T[] | unknown): input is T[] {
   return Array.isArray(input);
 }
 
