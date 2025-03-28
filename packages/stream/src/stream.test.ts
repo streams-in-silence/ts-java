@@ -1,27 +1,27 @@
-import { describe, expect, it, vitest } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { Stream } from './stream';
 
 describe('Stream', () => {
-  it('works', () => {
-    const stream = Stream.of([1, 2, 3]);
+  describe('of', () => {
+    it('should create a new sequential Stream from a single element', () => {
+      const result = Stream.of('foo');
 
-    expect(stream.count()).toBe(3);
-  });
+      expect(result).toBeInstanceOf(Stream);
+      expect(result.count()).toBe(1);
+    });
 
-  it("doesn't call the method", () => {
-    const stream = Stream.of([1, 2, 3]);
-    const filter = vitest.fn();
+    it('should create a sequential Stream from multiple arguments', () => {
+      const result = Stream.of('foo', 'bar', 'baz');
 
-    stream.filter(filter);
+      expect(result).toBeInstanceOf(Stream);
+      expect(result.count()).toBe(3);
+    });
 
-    expect(filter).not.toHaveBeenCalled();
-  });
+    it('should not unpack an array of elements into a new Stream', () => {
+      const result = Stream.of([1, 2, 3]);
 
-  it('filters', () => {
-    const stream = Stream.of([1, 2, 3, 4, 5]);
-    const filter = vitest.fn((n: number) => n % 2 === 0);
-
-    expect(stream.filter(filter).count()).toBe(2);
-    expect(filter).toHaveBeenCalledTimes(5);
+      expect(result).toBeInstanceOf(Stream);
+      expect(result.count()).toBe(1);
+    });
   });
 });

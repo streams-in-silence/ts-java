@@ -1,57 +1,103 @@
-import { isArray } from '@ts-java/common/typeguards';
-export abstract class Stream<T> {
-  public static of<U>(elements: U[]): Stream<U>;
-  public static of<T>(element: T): Stream<T>;
-  public static of<T, U>(elements: T | U[]): Stream<T> | Stream<U> {
-    if (isArray(elements)) {
-      return new Stream.#Impl(elements[Symbol.iterator]());
+import type { BaseStream } from './base.stream';
+
+export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
+  public static of<T>(elements: T): Stream<T>;
+  public static of<T>(...elements: T[]): Stream<T>;
+  public static of<T>(...elements: T[]): Stream<T> {
+    function* ofIterator() {
+      for (const element of elements) {
+        yield element;
+      }
     }
 
-    return new Stream.#Impl(
-      (function* iterator() {
-        yield elements;
-      })()
-    );
+    return new Stream.#Impl<T>(ofIterator());
   }
 
   readonly #iterator: Iterator<T>;
+  readonly #iterable: Iterable<T>;
 
   protected constructor(iterator: Iterator<T>) {
     this.#iterator = iterator;
+
+    this.#iterable = (function* () {
+      let next = iterator.next();
+      while (!next.done) {
+        yield next.value;
+        next = iterator.next();
+      }
+    })();
+  }
+
+  public close(): void {
+    // the base stream doesn't need to be closed
+  }
+
+  public iterator(): Iterator<T> {
+    return this.#iterator;
+  }
+
+  public onClose(/*closeHandler: () => void*/): Stream<T> {
+    throw new Error('Method not implemented.');
+  }
+
+  public unordered(): Stream<T> {
+    throw new Error('Method not implemented.');
   }
 
   static readonly #Impl = class StreamImpl<T> extends Stream<T> {
     constructor(iterator: Iterator<T>) {
       super(iterator);
     }
+
+    static {
+      Object.defineProperty(this.prototype, Symbol.toStringTag, {
+        value: 'Stream',
+        configurable: true,
+        enumerable: false,
+        writable: false,
+      });
+    }
   };
 
   public count(): number {
     let count = 0;
 
-    let next = this.#iterator.next();
-
-    while (!next.done) {
+    while (!this.#iterator.next().done) {
       count++;
-      next = this.#iterator.next();
     }
 
     return count;
   }
 
   public filter(predicate: (value: T) => boolean): Stream<T> {
-    const iterator = this.#iterator;
-    function* filterIterator() {
-      let next = iterator.next();
+    const iterable = this.#iterable;
 
-      while (!next.done) {
-        if (predicate(next.value)) {
-          yield next.value;
+    function* filterIterator() {
+      for (const value of iterable) {
+        if (predicate(value)) {
+          yield value;
         }
-        next = iterator.next();
       }
     }
 
     return new Stream.#Impl<T>(filterIterator());
+  }
+
+  public forEach(callback: (value: T) => void): void {
+    for (const elem of this.#iterable) {
+      callback(elem);
+    }
+  }
+
+  public map<U>(mapper: (element: T) => U): Stream<U> {
+    const iterable = this.#iterable;
+
+    function* mapIterator() {
+      for (const value of iterable) {
+        yield mapper(value);
+      }
+    }
+
+    return new Stream.#Impl<U>(mapIterator());
   }
 }
