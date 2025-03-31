@@ -4,13 +4,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static of<T>(elements: T): Stream<T>;
   public static of<T>(...elements: T[]): Stream<T>;
   public static of<T>(...elements: T[]): Stream<T> {
-    function* ofIterator() {
-      for (const element of elements) {
-        yield element;
-      }
-    }
-
-    return new Stream.#Impl<T>(ofIterator());
+    return new Stream.#Impl<T>(elements[Symbol.iterator]());
   }
 
   readonly #iterator: Iterator<T>;
@@ -19,13 +13,9 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   protected constructor(iterator: Iterator<T>) {
     this.#iterator = iterator;
 
-    this.#iterable = (function* () {
-      let next = iterator.next();
-      while (!next.done) {
-        yield next.value;
-        next = iterator.next();
-      }
-    })();
+    this.#iterable = {
+      [Symbol.iterator]: () => iterator,
+    };
   }
 
   public close(): void {
