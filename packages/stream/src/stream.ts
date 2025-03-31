@@ -7,6 +7,10 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     return new Stream.#Impl<T>(elements[Symbol.iterator]());
   }
 
+  public static ofArray<T>(element: T[]): Stream<T> {
+    return new Stream.#Impl<T>(element[Symbol.iterator]());
+  }
+
   readonly #iterator: Iterator<T>;
   readonly #iterable: Iterable<T>;
 

@@ -25,6 +25,20 @@ describe('Stream', () => {
     });
   });
 
+  describe('ofArray', () => {
+    it('should create a new sequential Stream from an array', () => {
+      const result = Stream.ofArray([1, 2, 3]);
+
+      expect(result).toBeInstanceOf(Stream);
+    });
+
+    it('should create a new sequential Stream that returns each element of the provided array', () => {
+      const result = Stream.ofArray([1, 2, 3]);
+
+      expect(result.count()).toBe(3);
+    });
+  });
+
   describe('filter', () => {
     it('should be an intermediate operation and return a new sequential', () => {
       const result = Stream.of(1, 2, 3).filter(() => true);
