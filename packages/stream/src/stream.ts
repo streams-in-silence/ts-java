@@ -80,14 +80,14 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public map<U>(mapper: (element: T) => U): Stream<U> {
-    const iterable = this.#iterable;
-
-    function* mapIterator() {
-      for (const value of iterable) {
-        yield mapper(value);
-      }
-    }
-
-    return new Stream.#Impl<U>(mapIterator());
+    return new Stream.#Impl<U>({
+      next: () => {
+        const next = this.#iterator.next();
+        if (!next.done) {
+          return { value: mapper(next.value), done: false };
+        }
+        return { value: undefined, done: true };
+      },
+    });
   }
 }
