@@ -49,6 +49,10 @@
     "typescript": "^5.8.2",
     "vitest": "^3.0.7"
   },
+  "peerDependencies": {
+    "@ts-java/comparator": "^1",
+    "@ts-java/optional": "^1"
+  },
   "bugs": {
     "url": "https://github.com/streams-in-silence/ts-java/issues"
   },

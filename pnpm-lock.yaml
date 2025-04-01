@@ -134,6 +134,13 @@ importers:
         version: 3.0.7(@types/node@20.14.12)
 
   packages/stream:
+    dependencies:
+      '@ts-java/comparator':
+        specifier: ^1
+        version: 1.1.0
+      '@ts-java/optional':
+        specifier: ^1
+        version: 1.1.0(es-toolkit@1.33.0)
     devDependencies:
       '@arethetypeswrong/cli':
         specifier: ^0.17.4
@@ -597,6 +604,14 @@ packages:
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
+
+  '@ts-java/comparator@1.1.0':
+    resolution: {integrity: sha512-0ZpGUSTSNgFshkjXV0RSTe5jY5KdYUX8P8BGGn+yll4lF7GmsvX47B+dl56fOMVWp+cecyxEhNbZvL8zzdRPdA==}
+
+  '@ts-java/optional@1.1.0':
+    resolution: {integrity: sha512-Fq5FJU61p7rAbaNkpw+kVsDPrQA0o1VIHU5EtYQYDC1FSOsIwGl7icZXvp2hKNkfk/9+KMSI0nA0ORARdroFMA==}
+    peerDependencies:
+      es-toolkit: ^1
 
   '@types/argparse@1.0.38':
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
@@ -2107,6 +2122,12 @@ snapshots:
     optional: true
 
   '@sindresorhus/is@4.6.0': {}
+
+  '@ts-java/comparator@1.1.0': {}
+
+  '@ts-java/optional@1.1.0(es-toolkit@1.33.0)':
+    dependencies:
+      es-toolkit: 1.33.0
 
   '@types/argparse@1.0.38':
     optional: true
