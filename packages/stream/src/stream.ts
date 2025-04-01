@@ -4,7 +4,17 @@ import type { BaseStream } from './base.stream';
 
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static concat<T>(a: Stream<T>, b: Stream<T>): Stream<T> {
-    throw new Error('Method not implemented.');
+    return new Stream.#Impl<T>({
+      next() {
+        const next = a.iterator().next();
+
+        if (!next.done) {
+          return next;
+        }
+
+        return b.iterator().next();
+      },
+    });
   }
 
   public static empty<T>(): Stream<T> {
@@ -23,7 +33,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
-  public static of<T>(elements: T): Stream<T>;
+  public static of<T>(element: T): Stream<T>;
   public static of<T>(...elements: T[]): Stream<T>;
   public static of<T>(...elements: T[]): Stream<T> {
     return new Stream.#Impl<T>(elements[Symbol.iterator]());
@@ -150,10 +160,10 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public map<U>(mapper: (element: T) => U): Stream<U> {
     return new Stream.#Impl<U>({
       next: () => {
-        const next = this.#iterator.next();
-        if (!next.done) {
-          return { value: mapper(next.value), done: false };
+        for (const elem of this.#iterable) {
+          return { value: mapper(elem), done: false };
         }
+
         return { value: undefined, done: true };
       },
     });
@@ -177,7 +187,16 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public peek(action: (value: T) => void): Stream<T> {
-    throw new Error('Method not implemented.');
+    return new Stream.#Impl<T>({
+      next: () => {
+        for (const elem of this.#iterable) {
+          action(elem);
+          return { value: elem, done: false };
+        }
+
+        return { value: undefined, done: true };
+      },
+    });
   }
 
   public reduce(accumulator: (value: T) => T): Optional<T>;
