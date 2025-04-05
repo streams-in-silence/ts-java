@@ -101,6 +101,83 @@ describe('Stream', () => {
       });
     });
 
+    describe('iterate', () => {
+      it('should create a new Stream from the provided function', () => {
+        const result = Stream.iterate('foo', () => 'bar');
+
+        expect(result).toBeInstanceOf(Stream);
+      });
+
+      it('should return an infinite Stream', () => {
+        const maxIterations = Math.floor(Math.random() * 9 + 1);
+
+        expect.assertions(2 * maxIterations);
+        const stream = Stream.iterate('foo', (v: string) => {
+          if (Math.random() < 0.5) {
+            return v;
+          }
+          return v.toUpperCase();
+        });
+
+        let iteration = 0;
+
+        while (iteration < maxIterations) {
+          const next = stream.iterator().next();
+
+          expect(next.value).toBeDefined();
+          expect(next.done).toBe(false);
+          iteration++;
+        }
+      });
+
+      it('should return the seed on the first iteration', () => {
+        const spy = vitest.fn<(v: string) => string>().mockReturnValue('bar');
+        const stream = Stream.iterate('foo', spy);
+
+        expect(stream.iterator().next().value).toBe('foo');
+      });
+
+      it('should not call the provided function on the first iteration', () => {
+        const spy = vitest.fn<(v: string) => string>().mockReturnValue('bar');
+        const stream = Stream.iterate('foo', spy);
+
+        stream.iterator().next();
+
+        expect(spy).not.toHaveBeenCalled();
+      });
+
+      it('should provide the return value of the function in the next interation', () => {
+        const spy = vitest
+          .fn<(v: string) => string>()
+          .mockImplementation((v) => {
+            switch (v) {
+              case 'foo':
+                return 'bar';
+              case 'bar':
+                return 'baz';
+              case 'baz':
+              default:
+                return 'foo';
+            }
+          });
+
+        const stream = Stream.iterate('foo', spy);
+        const iterator = stream.iterator();
+
+        expect(iterator.next().value).toBe('foo');
+        expect(spy).not.toHaveBeenCalled();
+
+        expect(iterator.next().value).toBe('bar');
+        expect(spy).toHaveBeenNthCalledWith(1, 'foo');
+
+        expect(iterator.next().value).toBe('baz');
+        expect(spy).toHaveBeenNthCalledWith(2, 'bar');
+
+        expect(iterator.next().value).toBe('foo');
+        expect(spy).toHaveBeenNthCalledWith(3, 'baz');
+      });
+    });
+
     describe('of', () => {
       it('should create a new Stream from a single element', () => {
         const result = Stream.of('foo');

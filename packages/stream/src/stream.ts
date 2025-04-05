@@ -2,6 +2,8 @@ import { Comparator } from '@ts-java/comparator';
 import type { Optional } from '@ts-java/optional';
 import type { BaseStream } from './base.stream';
 
+import { isUndefined } from '@ts-java/common/typeguards';
+
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static concat<T>(a: Stream<T>, b: Stream<T>): Stream<T> {
     return new Stream.#Impl<T>({
@@ -34,7 +36,19 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public static iterate<T>(seed: T, f: (value: T) => T): Stream<T> {
-    throw new Error('Method not implemented.');
+    let lastValue: T;
+
+    return new Stream.#Impl<T>({
+      next() {
+        if (isUndefined(lastValue)) {
+          lastValue = seed;
+        } else {
+          lastValue = f(lastValue);
+        }
+
+        return { done: false, value: lastValue };
+      },
+    });
   }
 
   public static of<T>(element: T): Stream<T>;
