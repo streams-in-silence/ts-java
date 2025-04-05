@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./exception/illegal-state": "./src/exception/illegal-state.ts",
     "./exception/no-such-element": "./src/exception/no-such-element.ts",
     "./exception/null-pointer": "./src/exception/null-pointer.ts",
     "./typeguards": "./src/typeguards/index.ts",
