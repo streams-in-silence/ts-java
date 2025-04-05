@@ -26,7 +26,11 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public static generate<T>(supplier: () => T): Stream<T> {
-    throw new Error('Method not implemented.');
+    return new Stream.#Impl<T>({
+      next() {
+        return { done: false, value: supplier() };
+      },
+    });
   }
 
   public static iterate<T>(seed: T, f: (value: T) => T): Stream<T> {

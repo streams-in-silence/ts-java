@@ -58,6 +58,49 @@ describe('Stream', () => {
       });
     });
 
+    describe('generate', () => {
+      it('should create a new Stream from the provided supplier', () => {
+        const result = Stream.generate(() => 'foo');
+
+        expect(result).toBeInstanceOf(Stream);
+      });
+
+      it('should use the supplier to provide the value when iterating', () => {
+        let count = 0;
+        const supplier = vitest.fn().mockImplementation(() => {
+          return count++;
+        });
+
+        const stream = Stream.generate(supplier);
+
+        const first = stream.iterator().next();
+        expect(first.value).toBe(0);
+        expect(supplier).toHaveBeenCalledTimes(1);
+
+        const second = stream.iterator().next();
+        expect(second.value).toBe(1);
+        expect(second.value).not.toBe(first.value);
+        expect(supplier).toHaveBeenCalledTimes(2);
+      });
+
+      it('should return an infinite Stream', () => {
+        const maxIterations = Math.floor(Math.random() * 9 + 1);
+
+        expect.assertions(2 * maxIterations);
+        const stream = Stream.generate(() => Math.random());
+
+        let iteration = 0;
+
+        while (iteration < maxIterations) {
+          const next = stream.iterator().next();
+
+          expect(next.value).toBeDefined();
+          expect(next.done).toBe(false);
+          iteration++;
+        }
+      });
+    });
+
     describe('of', () => {
       it('should create a new Stream from a single element', () => {
         const result = Stream.of('foo');
