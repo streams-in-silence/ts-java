@@ -1,3 +1,4 @@
+import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { describe, expect, it, vitest } from 'vitest';
 import { Stream } from './stream';
 
@@ -216,6 +217,48 @@ describe('Stream', () => {
     });
   });
 
+  describe('close', () => {
+    it('should close the current stream', () => {
+      const stream = Stream.of(1, 2, 3);
+
+      stream.close();
+
+      expect(() => stream.forEach(vitest.fn())).toThrow(IllegalStateException);
+    });
+
+    it('should invoke each onClose callback', () => {
+      const onClose1 = vitest.fn();
+      const onClose2 = vitest.fn();
+
+      Stream.of(1, 2, 3).onClose(onClose1).onClose(onClose2).close();
+
+      expect(onClose1).toHaveBeenCalled();
+      expect(onClose2).toHaveBeenCalled();
+    });
+
+    it('should invoke each onClose callback in the order they were provided', () => {
+      const spy = vitest.fn();
+      const onClose1 = () => spy('first');
+      const onClose2 = () => spy('second');
+
+      Stream.of(1, 2, 3).onClose(onClose1).onClose(onClose2).close();
+
+      expect(spy).toHaveBeenNthCalledWith(1, 'first');
+      expect(spy).toHaveBeenNthCalledWith(2, 'second');
+    });
+
+    it('should not invoke the close handlers when the stream was already closed', () => {
+      const onClose = vitest.fn();
+
+      const stream = Stream.of(1, 2, 3).onClose(onClose);
+
+      stream.close();
+      stream.close();
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('filter', () => {
     it('should be an intermediate operation and return a new Stream', () => {
       const result = Stream.of(1, 2, 3).filter(vitest.fn());
@@ -260,6 +303,15 @@ describe('Stream', () => {
       expect(callback).toHaveBeenNthCalledWith(2, 2);
       expect(callback).toHaveBeenNthCalledWith(3, 3);
       expect(callback).toHaveBeenNthCalledWith(4, 4);
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const callback = vitest.fn();
+
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.forEach(callback)).toThrow(IllegalStateException);
     });
   });
 

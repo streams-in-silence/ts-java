@@ -2,6 +2,7 @@ import { Comparator } from '@ts-java/comparator';
 import type { Optional } from '@ts-java/optional';
 import type { BaseStream } from './base.stream';
 
+import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { isUndefined } from '@ts-java/common/typeguards';
 
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
@@ -64,24 +65,44 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   readonly #iterator: Iterator<T>;
   readonly #iterable: Iterable<T>;
 
+  /**
+   * Internal indicator if a stream has been consumed.
+   */
+  private isClosed: boolean;
+
+  /**
+   * A list of all provided closeHandlers.
+   */
+  private closeHandlers: Array<() => void>;
+
   protected constructor(iterator: Iterator<T>) {
     this.#iterator = iterator;
 
     this.#iterable = {
       [Symbol.iterator]: () => iterator,
     };
+
+    this.isClosed = false;
+    this.closeHandlers = [];
   }
 
   public close(): void {
-    // the base stream doesn't need to be closed
+    this.isClosed = true;
+
+    for (const closeHandler of this.closeHandlers) {
+      closeHandler();
+    }
+
+    this.closeHandlers = [];
   }
 
   public iterator(): Iterator<T> {
     return this.#iterator;
   }
 
-  public onClose(/*closeHandler: () => void*/): Stream<T> {
-    throw new Error('Method not implemented.');
+  public onClose(closeHandler: () => void): this {
+    this.closeHandlers.push(closeHandler);
+    return this;
   }
 
   public unordered(): Stream<T> {
@@ -162,6 +183,10 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public forEach(action: (value: T) => void): void {
+    if (this.isClosed) {
+      throw new IllegalStateException('Stream was already closed.');
+    }
+
     for (const elem of this.#iterable) {
       action(elem);
     }
