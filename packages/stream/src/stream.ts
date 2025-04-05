@@ -125,7 +125,13 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   };
 
   public allMatch(predicate: (value: T) => boolean): boolean {
-    throw new Error('Method not implemented.');
+    for (const value of this.#iterable) {
+      if (!predicate(value)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public anyMatch(predicate: (value: T) => boolean): boolean {

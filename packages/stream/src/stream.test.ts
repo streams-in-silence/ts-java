@@ -1,4 +1,5 @@
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
+import { isNumber } from '@ts-java/common/typeguards';
 import { describe, expect, it, vitest } from 'vitest';
 import { Stream } from './stream';
 
@@ -273,6 +274,47 @@ describe('Stream', () => {
       expect(iterator.next().value).toBe(2);
       expect(iterator.next().value).toBe(3);
       expect(iterator.next().done).toBe(true);
+    });
+  });
+
+  describe('allMatch', () => {
+    it('should return true for an empty stream', () => {
+      const result = Stream.empty().allMatch(() => true);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return true when all elements of the stream match the given predicate', () => {
+      const result = Stream.of(1, 2, 3).allMatch(isNumber);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when one of the elements does not match the given predicate', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 1;
+        });
+
+      const result = Stream.of(1, 2, 3).allMatch(spy);
+
+      expect(result).toBe(false);
+    });
+
+    it('should stop iterating when one of the elements does not match the given predicate', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 1;
+        });
+
+      Stream.of(1, 2, 3).allMatch(spy);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      expect(spy).toHaveBeenNthCalledWith(1, 1);
+      expect(spy).toHaveBeenNthCalledWith(2, 2);
     });
   });
 
