@@ -259,6 +259,23 @@ describe('Stream', () => {
     });
   });
 
+  describe('iterator', () => {
+    it('should return an iterator of the stream', () => {
+      const iterator = Stream.of(1, 2, 3).iterator();
+
+      expect(iterator).toBeInstanceOf(Iterator);
+    });
+
+    it('should allow to manually iterate over the elements of the stream', () => {
+      const iterator = Stream.of(1, 2, 3).iterator();
+
+      expect(iterator.next().value).toBe(1);
+      expect(iterator.next().value).toBe(2);
+      expect(iterator.next().value).toBe(3);
+      expect(iterator.next().done).toBe(true);
+    });
+  });
+
   describe('filter', () => {
     it('should be an intermediate operation and return a new Stream', () => {
       const result = Stream.of(1, 2, 3).filter(vitest.fn());
