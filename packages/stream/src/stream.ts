@@ -125,6 +125,10 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   };
 
   public allMatch(predicate: (value: T) => boolean): boolean {
+    if (this.isClosed) {
+      throw new IllegalStateException();
+    }
+
     for (const value of this.#iterable) {
       if (!predicate(value)) {
         return false;
@@ -135,7 +139,17 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public anyMatch(predicate: (value: T) => boolean): boolean {
-    throw new Error('Method not implemented.');
+    if (this.isClosed) {
+      throw new IllegalStateException();
+    }
+
+    for (const value of this.#iterable) {
+      if (predicate(value)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // @todo: add Collector class/interface

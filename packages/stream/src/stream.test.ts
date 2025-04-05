@@ -316,6 +316,55 @@ describe('Stream', () => {
       expect(spy).toHaveBeenNthCalledWith(1, 1);
       expect(spy).toHaveBeenNthCalledWith(2, 2);
     });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.allMatch(vitest.fn())).toThrow(IllegalStateException);
+    });
+  });
+
+  describe('anyMatch', () => {
+    it('should return false for an empty stream', () => {
+      const result = Stream.empty().anyMatch(() => true);
+
+      expect(result).toBe(false);
+    });
+
+    it('should return true when one element of the stream matches the given predicate', () => {
+      const result = Stream.of(1, 2, 3).anyMatch((v) => v % 2 === 0);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when none of the elements match the given predicate', () => {
+      const result = Stream.of(1, 2, 3).anyMatch((v) => v > 3);
+
+      expect(result).toBe(false);
+    });
+
+    it('should stop iterating as soon as the first element matches the given predicate', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 0;
+        });
+
+      Stream.of(1, 2, 3).anyMatch(spy);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      expect(spy).toHaveBeenNthCalledWith(1, 1);
+      expect(spy).toHaveBeenNthCalledWith(2, 2);
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.anyMatch(vitest.fn())).toThrow(IllegalStateException);
+    });
   });
 
   describe('filter', () => {
@@ -365,12 +414,10 @@ describe('Stream', () => {
     });
 
     it('should throw an IllegalStateException when the stream was closed before', () => {
-      const callback = vitest.fn();
-
       const stream = Stream.of(1, 2, 3, 4);
       stream.close();
 
-      expect(() => stream.forEach(callback)).toThrow(IllegalStateException);
+      expect(() => stream.forEach(vitest.fn())).toThrow(IllegalStateException);
     });
   });
 
