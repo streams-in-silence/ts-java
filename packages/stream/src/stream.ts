@@ -5,6 +5,7 @@ import type { BaseStream } from './base.stream';
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { isUndefined } from '@ts-java/common/typeguards';
 import { AutoClose } from './decorators/auto-close';
+import { IsNotClosed } from './decorators/is-not-closed';
 
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static concat<T>(a: Stream<T>, b: Stream<T>): Stream<T> {
@@ -125,12 +126,9 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     }
   };
 
+  @IsNotClosed
   @AutoClose
   public allMatch(predicate: (value: T) => boolean): boolean {
-    if (this.isClosed) {
-      throw new IllegalStateException();
-    }
-
     let allMatch = true;
 
     for (const value of this.#iterable) {
@@ -143,12 +141,9 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     return allMatch;
   }
 
+  @IsNotClosed
   @AutoClose
   public anyMatch(predicate: (value: T) => boolean): boolean {
-    if (this.isClosed) {
-      throw new IllegalStateException();
-    }
-
     let found = false;
 
     for (const value of this.#iterable) {
@@ -166,12 +161,9 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
+  @IsNotClosed
   @AutoClose
   public count(): number {
-    if (this.isClosed) {
-      throw new IllegalStateException();
-    }
-
     let count = 0;
 
     while (!this.#iterator.next().done) {
@@ -216,6 +208,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
+  @IsNotClosed
   @AutoClose
   public forEach(action: (value: T) => void): void {
     if (this.isClosed) {
