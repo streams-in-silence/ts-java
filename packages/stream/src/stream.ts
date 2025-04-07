@@ -198,6 +198,25 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   @IsNotClosed
   @AutoClose
   public findAny(): Optional<T> {
+    let next: IteratorResult<T>;
+
+    // try to find any element
+    do {
+      next = this.#iterator.next();
+
+      if (isUndefined(next.value)) {
+        continue;
+      }
+
+      return Optional.of(next.value);
+    } while (!next.done);
+
+    return Optional.empty();
+  }
+
+  @IsNotClosed
+  @AutoClose
+  public findFirst(): Optional<T> {
     const next = this.#iterator.next();
 
     if (isUndefined(next.value)) {
@@ -205,10 +224,6 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     }
 
     return Optional.of(next.value);
-  }
-
-  public findFirst(): Optional<T> {
-    throw new Error('Method not implemented.');
   }
 
   public flatMap<R>(mapper: (value: T) => Stream<R>): Stream<R> {

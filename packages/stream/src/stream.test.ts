@@ -482,6 +482,37 @@ describe('Stream', () => {
     });
   });
 
+  describe('findFirst', () => {
+    it('should return an Optional describing the first value of the stream', () => {
+      const result = Stream.of(4, 3, 2, 1).findFirst();
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isPresent()).toBe(true);
+      expect(result.orElseThrow()).toBe(4);
+    });
+
+    it('should return an empty Optional when the stream is empty', () => {
+      const result = Stream.empty().findFirst();
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.findFirst();
+
+      expect(() => stream.findFirst()).toThrow(IllegalStateException);
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.findFirst()).toThrow(IllegalStateException);
+    });
+  });
+
   describe('forEach', () => {
     it('should call the callback on each element of the Stream', () => {
       const callback = vitest.fn();
