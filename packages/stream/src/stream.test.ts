@@ -317,6 +317,13 @@ describe('Stream', () => {
       expect(spy).toHaveBeenNthCalledWith(2, 2);
     });
 
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.allMatch(() => false);
+
+      expect(() => stream.allMatch(() => true)).toThrow(IllegalStateException);
+    });
+
     it('should throw an IllegalStateException when the stream was closed before', () => {
       const stream = Stream.of(1, 2, 3, 4);
       stream.close();
@@ -359,11 +366,53 @@ describe('Stream', () => {
       expect(spy).toHaveBeenNthCalledWith(2, 2);
     });
 
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.anyMatch(() => false);
+
+      expect(() => stream.anyMatch(() => true)).toThrow(IllegalStateException);
+    });
+
     it('should throw an IllegalStateException when the stream was closed before', () => {
       const stream = Stream.of(1, 2, 3, 4);
       stream.close();
 
       expect(() => stream.anyMatch(vitest.fn())).toThrow(IllegalStateException);
+    });
+  });
+
+  describe('collect', () => {
+    it.todo(
+      'should reduce the elements of a stream using supplier, accumulator and combiner'
+    );
+    it.todo('should reduce the elements of a stream using a collector');
+    it.todo('should return a mutable result');
+    it.todo('should be a terminal operation');
+    it.todo(
+      'should throw an IllegalStateException when the stream was closed before'
+    );
+  });
+
+  describe('count', () => {
+    it('should return the count of elements in the stream', () => {
+      const result = Stream.of(1, 2, 3, 4).count();
+
+      expect(result).toBe(4);
+    });
+
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+
+      stream.count();
+
+      expect(() => stream.count()).toThrow(IllegalStateException);
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.count()).toThrow(IllegalStateException);
     });
   });
 
@@ -402,7 +451,7 @@ describe('Stream', () => {
   });
 
   describe('forEach', () => {
-    it('should be a terminal operation and call the callback on each element of the Stream', () => {
+    it('should call the callback on each element of the Stream', () => {
       const callback = vitest.fn();
 
       Stream.of(1, 2, 3, 4).forEach(callback);
@@ -411,6 +460,14 @@ describe('Stream', () => {
       expect(callback).toHaveBeenNthCalledWith(2, 2);
       expect(callback).toHaveBeenNthCalledWith(3, 3);
       expect(callback).toHaveBeenNthCalledWith(4, 4);
+    });
+
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+
+      stream.forEach(vitest.fn());
+
+      expect(() => stream.forEach(vitest.fn())).toThrow(IllegalStateException);
     });
 
     it('should throw an IllegalStateException when the stream was closed before', () => {

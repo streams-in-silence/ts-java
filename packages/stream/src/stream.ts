@@ -129,13 +129,18 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
       throw new IllegalStateException();
     }
 
+    let allMatch = true;
+
     for (const value of this.#iterable) {
       if (!predicate(value)) {
-        return false;
+        allMatch = false;
+        break;
       }
     }
 
-    return true;
+    this.close();
+
+    return allMatch;
   }
 
   public anyMatch(predicate: (value: T) => boolean): boolean {
@@ -143,13 +148,18 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
       throw new IllegalStateException();
     }
 
+    let found = false;
+
     for (const value of this.#iterable) {
       if (predicate(value)) {
-        return true;
+        found = true;
+        break;
       }
     }
 
-    return false;
+    this.close();
+
+    return found;
   }
 
   // @todo: add Collector class/interface
@@ -158,11 +168,17 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public count(): number {
+    if (this.isClosed) {
+      throw new IllegalStateException();
+    }
+
     let count = 0;
 
     while (!this.#iterator.next().done) {
       count++;
     }
+
+    this.close();
 
     return count;
   }
@@ -210,6 +226,8 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     for (const elem of this.#iterable) {
       action(elem);
     }
+
+    this.close();
   }
 
   public forEachOrdered(action: (value: T) => void): void {
