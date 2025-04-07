@@ -178,17 +178,21 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public filter(predicate: (value: T) => boolean): Stream<T> {
-    const iterable = this.#iterable;
+    return new Stream.#Impl<T>({
+      next: () => {
+        let result: IteratorResult<T>;
 
-    function* filterIterator() {
-      for (const value of iterable) {
-        if (predicate(value)) {
-          yield value;
-        }
-      }
-    }
+        do {
+          result = this.#iterator.next();
 
-    return new Stream.#Impl<T>(filterIterator());
+          if (result.done) {
+            break;
+          }
+        } while (!predicate(result.value));
+
+        return result;
+      },
+    });
   }
 
   public findAny(): Optional<T> {
