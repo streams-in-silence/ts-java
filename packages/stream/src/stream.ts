@@ -1,5 +1,5 @@
 import { Comparator } from '@ts-java/comparator';
-import type { Optional } from '@ts-java/optional';
+import { Optional } from '@ts-java/optional';
 import type { BaseStream } from './base.stream';
 
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
@@ -195,8 +195,16 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     });
   }
 
+  @IsNotClosed
+  @AutoClose
   public findAny(): Optional<T> {
-    throw new Error('Method not implemented.');
+    const next = this.#iterator.next();
+
+    if (isUndefined(next.value)) {
+      return Optional.empty();
+    }
+
+    return Optional.of(next.value);
   }
 
   public findFirst(): Optional<T> {

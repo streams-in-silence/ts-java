@@ -1,5 +1,6 @@
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { isNumber } from '@ts-java/common/typeguards';
+import { Optional } from '@ts-java/optional';
 import { describe, expect, it, vitest } from 'vitest';
 import { Stream } from './stream';
 
@@ -447,6 +448,37 @@ describe('Stream', () => {
         .forEach(spy);
 
       expect(spy).toHaveBeenCalledExactlyOnceWith(2);
+    });
+  });
+
+  describe('findAny', () => {
+    it('should return an Optional describing any value of the stream', () => {
+      const result = Stream.of(1, 2, 3, 4).findAny();
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isPresent()).toBe(true);
+      expect(result.orElseThrow()).toBeOneOf([1, 2, 3, 4]);
+    });
+
+    it('should return an empty Optional when the stream is empty', () => {
+      const result = Stream.empty().findAny();
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.findAny();
+
+      expect(() => stream.findAny()).toThrow(IllegalStateException);
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.findAny()).toThrow(IllegalStateException);
     });
   });
 
