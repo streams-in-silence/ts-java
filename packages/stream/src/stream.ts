@@ -4,6 +4,7 @@ import type { BaseStream } from './base.stream';
 
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { isUndefined } from '@ts-java/common/typeguards';
+import { AutoClose } from './decorators/auto-close';
 
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static concat<T>(a: Stream<T>, b: Stream<T>): Stream<T> {
@@ -124,6 +125,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     }
   };
 
+  @AutoClose
   public allMatch(predicate: (value: T) => boolean): boolean {
     if (this.isClosed) {
       throw new IllegalStateException();
@@ -138,11 +140,10 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
       }
     }
 
-    this.close();
-
     return allMatch;
   }
 
+  @AutoClose
   public anyMatch(predicate: (value: T) => boolean): boolean {
     if (this.isClosed) {
       throw new IllegalStateException();
@@ -157,8 +158,6 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
       }
     }
 
-    this.close();
-
     return found;
   }
 
@@ -167,6 +166,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
+  @AutoClose
   public count(): number {
     if (this.isClosed) {
       throw new IllegalStateException();
@@ -177,8 +177,6 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     while (!this.#iterator.next().done) {
       count++;
     }
-
-    this.close();
 
     return count;
   }
@@ -218,6 +216,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
+  @AutoClose
   public forEach(action: (value: T) => void): void {
     if (this.isClosed) {
       throw new IllegalStateException('Stream was already closed.');
@@ -226,8 +225,6 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     for (const elem of this.#iterable) {
       action(elem);
     }
-
-    this.close();
   }
 
   public forEachOrdered(action: (value: T) => void): void {
