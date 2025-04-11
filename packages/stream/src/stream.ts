@@ -252,7 +252,20 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public limit(maxSize: number): Stream<T> {
-    throw new Error('Method not implemented.');
+    if (Number.isNaN(maxSize) || !Number.isInteger(maxSize) || maxSize < 0) {
+      throw new TypeError('maxSize must be a positive integer');
+    }
+
+    let passedElements = 0;
+    return new Stream.#Impl({
+      next: () => {
+        if (passedElements >= maxSize) {
+          return { done: true, value: undefined };
+        }
+        passedElements++;
+        return this.#iterator.next();
+      },
+    });
   }
 
   public map<U>(mapper: (element: T) => U): Stream<U> {

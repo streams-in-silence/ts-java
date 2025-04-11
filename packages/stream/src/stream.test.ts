@@ -602,4 +602,74 @@ describe('Stream', () => {
       expect(spy).toHaveBeenNthCalledWith(4, 4);
     });
   });
+
+  describe('limit', () => {
+    it('should return a new Stream', () => {
+      const result = Stream.of(1, 2, 3).limit(10);
+
+      expect(result).toBeInstanceOf(Stream);
+    });
+
+    it('should not iterate immediately', () => {
+      const spy = vitest.fn((num) => num);
+      Stream.of(1, 2, 3).peek(spy).limit(10);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should truncate the Stream to be no longer than the maxSize in lenght', () => {
+      const stream = Stream.of(1, 2, 3).limit(1);
+
+      expect(stream.count()).toBe(1);
+    });
+
+    it('should return all elements of the Stream if the amount is smaller than the maxSize', () => {
+      const stream = Stream.of(1, 2, 3).limit(10);
+
+      expect(stream.count()).toBe(3);
+    });
+
+    it('should return an empty Stream if maxSize is 0', () => {
+      const stream = Stream.of(1, 2, 3).limit(0);
+
+      expect(stream.count()).toBe(0);
+    });
+
+    it('should throw an error if maxSize is NaN', () => {
+      expect(() => Stream.of(1, 2, 3).limit(NaN)).toThrow(TypeError);
+    });
+
+    it('should throw an error if maxSize is negative', () => {
+      expect(() => Stream.of(1, 2, 3).limit(-1)).toThrow(TypeError);
+    });
+
+    it('should throw an error if the maxSize is not a full number', () => {
+      expect(() => Stream.of(1, 2, 3).limit(1.01)).toThrow(TypeError);
+    });
+
+    it('should not throw an error if the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3);
+
+      stream.close();
+
+      expect(() => stream.limit(10)).not.toThrow();
+    });
+
+    it('should be a short-circuiting Stream', () => {
+      const spy = vitest.fn();
+      const onClose = vitest.fn();
+
+      Stream.iterate(1, (num) => num + 1)
+        .limit(3)
+        .onClose(onClose)
+        .forEach(spy);
+
+      expect(spy).toHaveBeenCalledTimes(3);
+      expect(spy).toHaveBeenNthCalledWith(1, 1);
+      expect(spy).toHaveBeenNthCalledWith(2, 2);
+      expect(spy).toHaveBeenNthCalledWith(3, 3);
+
+      expect(onClose).toHaveBeenCalledAfter(spy);
+    });
+  });
 });
