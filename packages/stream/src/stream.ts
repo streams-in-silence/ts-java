@@ -228,32 +228,38 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
 
   public flatMap<R>(mapper: (value: T) => Stream<R>): Stream<R> {
     const iterator = this.#iterator;
-    let otherStream: Stream<R>;
-    let otherIterator: Iterator<R> | null = null;
+    let mappedStream: Stream<R>;
+    let mappedIterator: Iterator<R> | null = null;
 
     return new Stream.#Impl<R>({
       next() {
-        while (true) {
-          if (!isNull(otherIterator)) {
-            const innerNext = otherIterator.next();
+        // go over to our next element in the stream
+        if (isNull(mappedIterator)) {
+          // the next element of the existing stream
+          const outerNext = iterator.next();
 
-            if (!innerNext.done) {
-              return innerNext;
-            }
-
-            otherStream.close();
-            otherIterator = null;
-          }
-
-          const outer = iterator.next();
-
-          if (outer.done) {
+          // if we're done, end the iteration
+          if (outerNext.done) {
             return { done: true, value: undefined };
           }
 
-          otherStream = mapper(outer.value);
-          otherIterator = otherStream.iterator();
+          // get the next stream so we can iterate over it
+          mappedStream = mapper(outerNext.value);
+          mappedIterator = mappedStream.iterator();
         }
+
+        const innerNext = mappedIterator.next();
+
+        // if the mapped stream is done, close it and go to our next element
+        if (innerNext.done) {
+          mappedStream.close();
+          mappedIterator = null;
+
+          // recurse to the our next element
+          return this.next();
+        }
+
+        return innerNext;
       },
     });
   }
