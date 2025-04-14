@@ -134,31 +134,25 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   @IsNotClosed
   @AutoClose
   public allMatch(predicate: (value: T) => boolean): boolean {
-    let allMatch = true;
-
     for (const value of this.#iterable) {
       if (!predicate(value)) {
-        allMatch = false;
-        break;
+        return false;
       }
     }
 
-    return allMatch;
+    return true;
   }
 
   @IsNotClosed
   @AutoClose
   public anyMatch(predicate: (value: T) => boolean): boolean {
-    let found = false;
-
     for (const value of this.#iterable) {
       if (predicate(value)) {
-        found = true;
-        break;
+        return true;
       }
     }
 
-    return found;
+    return false;
   }
 
   // @todo: add Collector class/interface
