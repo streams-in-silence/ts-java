@@ -513,6 +513,70 @@ describe('Stream', () => {
     });
   });
 
+  describe('flatMap', () => {
+    it('should be an intermediate operation and return a new Stream', () => {
+      const result = Stream.of([1, 2], [3, 4], [5, 6]).flatMap(Stream.ofArray);
+
+      expect(result).toBeInstanceOf(Stream);
+    });
+
+    it('should not run the mapper immediately', () => {
+      const spy = vitest.fn((arr: number[]) => Stream.ofArray(arr));
+      Stream.of([1, 2], [3, 4], [5, 6]).flatMap(spy);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should run the mapper function on every element when the stream is consumed', () => {
+      const spy = vitest.fn((arr: number[]) => Stream.ofArray(arr));
+      const result = Stream.of([1, 2], [3, 4], [5, 6]).flatMap(spy).count();
+
+      expect(spy).toHaveBeenNthCalledWith(1, [1, 2]);
+      expect(spy).toHaveBeenNthCalledWith(2, [3, 4]);
+      expect(spy).toHaveBeenNthCalledWith(3, [5, 6]);
+
+      expect(result).toBe(6);
+    });
+
+    it('should iterate over all elements from the mapped stream before going to the next', () => {
+      const stream = Stream.of([1, 2], [3, 4], [5, 6]).flatMap(Stream.ofArray);
+
+      expect(stream.iterator().next().value).toBe(1);
+      expect(stream.iterator().next().value).toBe(2);
+      expect(stream.iterator().next().value).toBe(3);
+      expect(stream.iterator().next().value).toBe(4);
+      expect(stream.iterator().next().value).toBe(5);
+      expect(stream.iterator().next().value).toBe(6);
+    });
+
+    it('should close the mapped stream when it is done iterating over all elements', () => {
+      const firstOnClose = vitest.fn();
+      const secondOnClose = vitest.fn();
+
+      const stream = Stream.of([1], [2]).flatMap((value) => {
+        switch (value[0]) {
+          case 1:
+            return Stream.of(1).onClose(firstOnClose);
+          case 2:
+            return Stream.of(2).onClose(secondOnClose);
+          default:
+            return Stream.empty();
+        }
+      });
+
+      expect(stream.iterator().next().value).toBe(1);
+      expect(firstOnClose).not.toHaveBeenCalled();
+      expect(secondOnClose).not.toHaveBeenCalled();
+
+      expect(stream.iterator().next().value).toBe(2);
+      expect(firstOnClose).toHaveBeenCalled();
+      expect(secondOnClose).not.toHaveBeenCalled();
+
+      expect(stream.iterator().next().done).toBe(true);
+      expect(secondOnClose).toHaveBeenCalled();
+    });
+  });
+
   describe('forEach', () => {
     it('should call the callback on each element of the Stream', () => {
       const callback = vitest.fn();

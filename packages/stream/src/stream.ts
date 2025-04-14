@@ -3,7 +3,7 @@ import { Optional } from '@ts-java/optional';
 import type { BaseStream } from './base.stream';
 
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
-import { isUndefined } from '@ts-java/common/typeguards';
+import { isNull, isUndefined } from '@ts-java/common/typeguards';
 import { AutoClose } from './decorators/auto-close';
 import { IsNotClosed } from './decorators/is-not-closed';
 
@@ -227,7 +227,35 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public flatMap<R>(mapper: (value: T) => Stream<R>): Stream<R> {
-    throw new Error('Method not implemented.');
+    const iterator = this.#iterator;
+    let otherStream: Stream<R>;
+    let otherIterator: Iterator<R> | null = null;
+
+    return new Stream.#Impl<R>({
+      next() {
+        while (true) {
+          if (!isNull(otherIterator)) {
+            const innerNext = otherIterator.next();
+
+            if (!innerNext.done) {
+              return innerNext;
+            }
+
+            otherStream.close();
+            otherIterator = null;
+          }
+
+          const outer = iterator.next();
+
+          if (outer.done) {
+            return { done: true, value: undefined };
+          }
+
+          otherStream = mapper(outer.value);
+          otherIterator = otherStream.iterator();
+        }
+      },
+    });
   }
 
   // @todo: replace => Stream<number> with NumberStream
