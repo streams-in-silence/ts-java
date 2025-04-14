@@ -74,13 +74,13 @@ describe('Stream', () => {
           return count++;
         });
 
-        const stream = Stream.generate(supplier);
+        const iterator = Stream.generate(supplier).iterator();
 
-        const first = stream.iterator().next();
+        const first = iterator.next();
         expect(first.value).toBe(0);
         expect(supplier).toHaveBeenCalledTimes(1);
 
-        const second = stream.iterator().next();
+        const second = iterator.next();
         expect(second.value).toBe(1);
         expect(second.value).not.toBe(first.value);
         expect(supplier).toHaveBeenCalledTimes(2);
@@ -90,12 +90,12 @@ describe('Stream', () => {
         const maxIterations = Math.floor(Math.random() * 9 + 1);
 
         expect.assertions(2 * maxIterations);
-        const stream = Stream.generate(() => Math.random());
+        const iterator = Stream.generate(() => Math.random()).iterator();
 
         let iteration = 0;
 
         while (iteration < maxIterations) {
-          const next = stream.iterator().next();
+          const next = iterator.next();
 
           expect(next.value).toBeDefined();
           expect(next.done).toBe(false);
@@ -115,17 +115,17 @@ describe('Stream', () => {
         const maxIterations = Math.floor(Math.random() * 9 + 1);
 
         expect.assertions(2 * maxIterations);
-        const stream = Stream.iterate('foo', (v: string) => {
+        const iterator = Stream.iterate('foo', (v: string) => {
           if (Math.random() < 0.5) {
             return v;
           }
           return v.toUpperCase();
-        });
+        }).iterator();
 
         let iteration = 0;
 
         while (iteration < maxIterations) {
-          const next = stream.iterator().next();
+          const next = iterator.next();
 
           expect(next.value).toBeDefined();
           expect(next.done).toBe(false);
@@ -275,6 +275,20 @@ describe('Stream', () => {
       expect(iterator.next().value).toBe(2);
       expect(iterator.next().value).toBe(3);
       expect(iterator.next().done).toBe(true);
+    });
+
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.iterator();
+
+      expect(() => stream.iterator()).toThrow(IllegalStateException);
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.iterator()).toThrow(IllegalStateException);
     });
   });
 
@@ -539,40 +553,44 @@ describe('Stream', () => {
     });
 
     it('should iterate over all elements from the mapped stream before going to the next', () => {
-      const stream = Stream.of([1, 2], [3, 4], [5, 6]).flatMap(Stream.ofArray);
+      const iterator = Stream.of([1, 2], [3, 4], [5, 6])
+        .flatMap(Stream.ofArray)
+        .iterator();
 
-      expect(stream.iterator().next().value).toBe(1);
-      expect(stream.iterator().next().value).toBe(2);
-      expect(stream.iterator().next().value).toBe(3);
-      expect(stream.iterator().next().value).toBe(4);
-      expect(stream.iterator().next().value).toBe(5);
-      expect(stream.iterator().next().value).toBe(6);
+      expect(iterator.next().value).toBe(2);
+      expect(iterator.next().value).toBe(3);
+      expect(iterator.next().value).toBe(1);
+      expect(iterator.next().value).toBe(4);
+      expect(iterator.next().value).toBe(5);
+      expect(iterator.next().value).toBe(6);
     });
 
     it('should close the mapped stream when it is done iterating over all elements', () => {
       const firstOnClose = vitest.fn();
       const secondOnClose = vitest.fn();
 
-      const stream = Stream.of([1], [2]).flatMap((value) => {
-        switch (value[0]) {
-          case 1:
-            return Stream.of(1).onClose(firstOnClose);
-          case 2:
-            return Stream.of(2).onClose(secondOnClose);
-          default:
-            return Stream.empty();
-        }
-      });
+      const iterator = Stream.of([1], [2])
+        .flatMap((value) => {
+          switch (value[0]) {
+            case 1:
+              return Stream.of(1).onClose(firstOnClose);
+            case 2:
+              return Stream.of(2).onClose(secondOnClose);
+            default:
+              return Stream.empty();
+          }
+        })
+        .iterator();
 
-      expect(stream.iterator().next().value).toBe(1);
+      expect(iterator.next().value).toBe(1);
       expect(firstOnClose).not.toHaveBeenCalled();
       expect(secondOnClose).not.toHaveBeenCalled();
 
-      expect(stream.iterator().next().value).toBe(2);
+      expect(iterator.next().value).toBe(2);
       expect(firstOnClose).toHaveBeenCalled();
       expect(secondOnClose).not.toHaveBeenCalled();
 
-      expect(stream.iterator().next().done).toBe(true);
+      expect(iterator.next().done).toBe(true);
       expect(secondOnClose).toHaveBeenCalled();
     });
   });

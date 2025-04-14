@@ -9,15 +9,18 @@ import { IsNotClosed } from './decorators/is-not-closed';
 
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static concat<T>(a: Stream<T>, b: Stream<T>): Stream<T> {
+    const aIterator = a.iterator();
+    const bIterator = b.iterator();
+
     return new Stream.#Impl<T>({
       next() {
-        const next = a.iterator().next();
+        const next = aIterator.next();
 
         if (!next.done) {
           return next;
         }
 
-        return b.iterator().next();
+        return bIterator.next();
       },
     });
   }
@@ -98,6 +101,8 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     this.closeHandlers = [];
   }
 
+  @IsNotClosed
+  @AutoClose
   public iterator(): Iterator<T> {
     return this.#iterator;
   }
