@@ -244,7 +244,7 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
 
           // get the next stream so we can iterate over it
           mappedStream = mapper(outerNext.value);
-          mappedIterator = mappedStream.iterator();
+          mappedIterator = mappedStream.#iterator;
         }
 
         const innerNext = mappedIterator.next();

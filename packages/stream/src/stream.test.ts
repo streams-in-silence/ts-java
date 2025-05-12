@@ -557,9 +557,9 @@ describe('Stream', () => {
         .flatMap(Stream.ofArray)
         .iterator();
 
+      expect(iterator.next().value).toBe(1);
       expect(iterator.next().value).toBe(2);
       expect(iterator.next().value).toBe(3);
-      expect(iterator.next().value).toBe(1);
       expect(iterator.next().value).toBe(4);
       expect(iterator.next().value).toBe(5);
       expect(iterator.next().value).toBe(6);
@@ -573,9 +573,9 @@ describe('Stream', () => {
         .flatMap((value) => {
           switch (value[0]) {
             case 1:
-              return Stream.of(1).onClose(firstOnClose);
+              return Stream.of(1, 3).onClose(firstOnClose);
             case 2:
-              return Stream.of(2).onClose(secondOnClose);
+              return Stream.of(2, 4).onClose(secondOnClose);
             default:
               return Stream.empty();
           }
@@ -586,8 +586,15 @@ describe('Stream', () => {
       expect(firstOnClose).not.toHaveBeenCalled();
       expect(secondOnClose).not.toHaveBeenCalled();
 
+      expect(iterator.next().value).toBe(3);
+      expect(firstOnClose).not.toHaveBeenCalled();
+      expect(secondOnClose).not.toHaveBeenCalled();
+
       expect(iterator.next().value).toBe(2);
       expect(firstOnClose).toHaveBeenCalled();
+      expect(secondOnClose).not.toHaveBeenCalled();
+
+      expect(iterator.next().value).toBe(4);
       expect(secondOnClose).not.toHaveBeenCalled();
 
       expect(iterator.next().done).toBe(true);
