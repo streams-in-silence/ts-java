@@ -2,7 +2,7 @@ import { Comparator } from '@ts-java/comparator';
 import { Optional } from '@ts-java/optional';
 import type { BaseStream } from './base.stream';
 
-import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
+import { NullPointerException } from '@ts-java/common/exception/null-pointer';
 import { isNull, isUndefined } from '@ts-java/common/typeguards';
 import { AutoClose } from './decorators/auto-close';
 import { IsNotClosed } from './decorators/is-not-closed';
@@ -271,10 +271,6 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   @IsNotClosed
   @AutoClose
   public forEach(action: (value: T) => void): void {
-    if (this.isClosed) {
-      throw new IllegalStateException('Stream was already closed.');
-    }
-
     for (const elem of this.#iterable) {
       action(elem);
     }
@@ -318,8 +314,30 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
+  @IsNotClosed
+  @AutoClose
   public max(comparator: Comparator<T>): Optional<T> {
-    throw new Error('Method not implemented.');
+    let element: T | null | undefined;
+    for (const elem of this.#iterable) {
+      if (
+        isUndefined(element) ||
+        isNull(element) ||
+        comparator.compare(elem, element) > 0
+      ) {
+        element = elem;
+      }
+    }
+
+    // stream was empty
+    if (isUndefined(element)) {
+      return Optional.empty();
+    }
+
+    if (isNull(element)) {
+      throw new NullPointerException();
+    }
+
+    return Optional.of(element);
   }
 
   public min(comparator: Comparator<T>): Optional<T> {

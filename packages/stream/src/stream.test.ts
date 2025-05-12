@@ -1,5 +1,7 @@
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
+import { NullPointerException } from '@ts-java/common/exception/null-pointer';
 import { isNumber } from '@ts-java/common/typeguards';
+import { Comparator } from '@ts-java/comparator';
 import { Optional } from '@ts-java/optional';
 import { describe, expect, it, vitest } from 'vitest';
 import { Stream } from './stream';
@@ -651,6 +653,54 @@ describe('Stream', () => {
       expect(spy).toHaveBeenNthCalledWith(1, 1);
       expect(spy).toHaveBeenNthCalledWith(2, 2);
       expect(spy).toHaveBeenNthCalledWith(3, 3);
+    });
+  });
+
+  describe('max', () => {
+    it('should return an Optional', () => {
+      const result = Stream.of(1, 3, 2).max(Comparator.naturalOrder());
+
+      expect(result).toBeInstanceOf(Optional);
+    });
+
+    it('should return an Optional describing the maximum element of the stream according to the provided Comparator', () => {
+      const result = Stream.of(1, 3, 2).max(Comparator.naturalOrder());
+
+      expect(result.orElseThrow()).toBe(3);
+    });
+
+    it('should return an empty Optional if the stream is empty', () => {
+      const result = Stream.empty().max(Comparator.naturalOrder());
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    it('should be a terminal operation', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+
+      stream.max(Comparator.naturalOrder());
+
+      expect(() => stream.max(Comparator.naturalOrder())).toThrow(
+        IllegalStateException
+      );
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.max(Comparator.naturalOrder())).toThrow(
+        IllegalStateException
+      );
+    });
+
+    it('should throw a NullPointerException when the max element is null', () => {
+      const stream = Stream.of(1, 2, 3, null);
+
+      expect(() =>
+        stream.max(Comparator.nullLast(Comparator.naturalOrder()))
+      ).toThrow(NullPointerException);
     });
   });
 
