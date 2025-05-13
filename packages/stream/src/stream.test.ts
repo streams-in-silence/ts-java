@@ -677,13 +677,11 @@ describe('Stream', () => {
     });
 
     it('should be a terminal operation', () => {
-      const stream = Stream.of(1, 2, 3, 4);
+      const spy = vitest.fn();
 
-      stream.max(Comparator.naturalOrder());
+      Stream.of(1, 2, 3, 4).onClose(spy).max(Comparator.naturalOrder());
 
-      expect(() => stream.max(Comparator.naturalOrder())).toThrow(
-        IllegalStateException
-      );
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should throw an IllegalStateException when the stream was closed before', () => {
@@ -691,6 +689,52 @@ describe('Stream', () => {
       stream.close();
 
       expect(() => stream.max(Comparator.naturalOrder())).toThrow(
+        IllegalStateException
+      );
+    });
+
+    it('should throw a NullPointerException when the max element is null', () => {
+      const stream = Stream.of(1, 2, 3, null);
+
+      expect(() =>
+        stream.max(Comparator.nullLast(Comparator.naturalOrder()))
+      ).toThrow(NullPointerException);
+    });
+  });
+
+  describe('min', () => {
+    it('should return an Optional', () => {
+      const result = Stream.of(1, 3, 2).min(Comparator.naturalOrder());
+
+      expect(result).toBeInstanceOf(Optional);
+    });
+
+    it('should return an Optional describing the maximum element of the stream according to the provided Comparator', () => {
+      const result = Stream.of(1, 3, 2).min(Comparator.naturalOrder());
+
+      expect(result.orElseThrow()).toBe(1);
+    });
+
+    it('should return an empty Optional if the stream is empty', () => {
+      const result = Stream.empty().min(Comparator.naturalOrder());
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    it('should be a terminal operation', () => {
+      const spy = vitest.fn();
+
+      Stream.of(1, 2, 3, 4).onClose(spy).min(Comparator.naturalOrder());
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.min(Comparator.naturalOrder())).toThrow(
         IllegalStateException
       );
     });

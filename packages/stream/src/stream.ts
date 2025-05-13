@@ -340,8 +340,30 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     return Optional.of(element);
   }
 
+  @IsNotClosed
+  @AutoClose
   public min(comparator: Comparator<T>): Optional<T> {
-    throw new Error('Method not implemented.');
+    let element: T | null | undefined;
+    for (const elem of this.#iterable) {
+      if (
+        isUndefined(element) ||
+        isNull(element) ||
+        comparator.compare(elem, element) < 0
+      ) {
+        element = elem;
+      }
+    }
+
+    // stream was empty
+    if (isUndefined(element)) {
+      return Optional.empty();
+    }
+
+    if (isNull(element)) {
+      throw new NullPointerException();
+    }
+
+    return Optional.of(element);
   }
 
   public noneMatch(predicate: (value: T) => boolean): boolean {
