@@ -5,6 +5,7 @@ import { Comparator } from '@ts-java/comparator';
 import { Optional } from '@ts-java/optional';
 import { describe, expect, it, vitest } from 'vitest';
 import { Stream } from './stream';
+import { BinaryOperator, type BiFunction } from './types';
 
 describe('Stream', () => {
   describe('static', () => {
@@ -938,6 +939,112 @@ describe('Stream', () => {
       expect(spy).toHaveBeenNthCalledWith(2, 3);
       expect(spy).toHaveBeenNthCalledWith(3, 2);
       expect(spy).toHaveBeenNthCalledWith(4, 4);
+    });
+  });
+
+  describe('reduce', () => {
+    it('should return an Optional when only providing an accumulator', () => {
+      const result = Stream.of(1, 2, 3).reduce((prev, curr) => prev + curr);
+
+      expect(result).toBeInstanceOf(Optional);
+    });
+
+    it('should return an empty Optional when the stream is empty and only an accumulator was provided', () => {
+      const result = Stream.empty<number>().reduce((prev, curr) => prev + curr);
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.isEmpty()).toBe(true);
+    });
+
+    it('should return an Optional describing the result of the reduction of the elements of the stream', () => {
+      const result = Stream.of(1, 2, 3).reduce((prev, curr) => prev + curr);
+
+      expect(result).toBeInstanceOf(Optional);
+      expect(result.orElseThrow()).toBe(6);
+    });
+
+    it('should perform a reduction on the elements of the stream using the provided accumulator', () => {
+      const accumulator = vitest
+        .fn<BinaryOperator<number>>()
+        .mockImplementation((prev, curr) => prev + curr);
+
+      Stream.of(1, 2, 3).reduce(accumulator);
+
+      expect(accumulator).toHaveBeenNthCalledWith(1, 1, 2);
+      expect(accumulator).toHaveBeenNthCalledWith(2, 3, 3);
+    });
+
+    it('should return the value of the provided identity if the stream is empty', () => {
+      const accumulator = vitest
+        .fn<BinaryOperator<number>>()
+        .mockImplementation((prev, curr) => prev + curr);
+
+      const result = Stream.empty<number>().reduce(10, accumulator);
+
+      expect(result).toBe(10);
+      expect(accumulator).not.toHaveBeenCalled();
+    });
+
+    it('should return the result of the reduction on the elements of the stream using the provided identity and the associative accumulator', () => {
+      const result = Stream.of(1, 2, 3).reduce(10, (prev, curr) => prev + curr);
+
+      expect(result).toBe(16);
+    });
+
+    it('should perform a reduction on the elements of the stream using the provided identity value and the associative accumulator', () => {
+      const accumulator = vitest
+        .fn<BinaryOperator<number>>()
+        .mockImplementation((prev, curr) => prev + curr);
+
+      Stream.of(1, 2, 3).reduce(10, accumulator);
+
+      expect(accumulator).toHaveBeenNthCalledWith(1, 10, 1);
+      expect(accumulator).toHaveBeenNthCalledWith(2, 11, 2);
+      expect(accumulator).toHaveBeenNthCalledWith(3, 13, 3);
+    });
+
+    it('should return the result of the reduction on the elements of the stream when the accumulator maps the elements of the stream to the type of the identity', () => {
+      const result = Stream.of('one', 'two', 'three').reduce(
+        10,
+        // maps from string to int
+        (prev, curr) => prev + curr.length
+      );
+
+      expect(result).toBe(21);
+    });
+
+    it('should perform a reduction on the elements of the stream when the accumulator maps the elements of the stream to the type of the identity', () => {
+      const accumulator = vitest
+        .fn<BiFunction<number, string, number>>()
+        .mockImplementation((prev, curr) => prev + curr.length);
+
+      Stream.of('one', 'two', 'three').reduce(0, accumulator);
+
+      expect(accumulator).toHaveBeenNthCalledWith(1, 0, 'one');
+      expect(accumulator).toHaveBeenNthCalledWith(2, 3, 'two');
+      expect(accumulator).toHaveBeenNthCalledWith(3, 6, 'three');
+    });
+
+    it('should throw a NullPointerException when the result of the reduction is null', () => {
+      const stream = Stream.of(1, 2, 3, null);
+
+      expect(() => stream.reduce(() => null)).toThrow(NullPointerException);
+    });
+
+    it('should be a terminal operation', () => {
+      const spy = vitest.fn();
+      Stream.of(1, 2, 3, 4)
+        .onClose(spy)
+        .reduce(() => 1);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.reduce(() => 1)).toThrow(IllegalStateException);
     });
   });
 });

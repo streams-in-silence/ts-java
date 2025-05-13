@@ -2,10 +2,17 @@ import { Comparator } from '@ts-java/comparator';
 import { Optional } from '@ts-java/optional';
 import type { BaseStream } from './base.stream';
 
+import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { NullPointerException } from '@ts-java/common/exception/null-pointer';
-import { isNull, isUndefined } from '@ts-java/common/typeguards';
+import {
+  isFunction,
+  isNone,
+  isNull,
+  isUndefined,
+} from '@ts-java/common/typeguards';
 import { AutoClose } from './decorators/auto-close';
 import { IsNotClosed } from './decorators/is-not-closed';
+import type { BiFunction, BinaryOperator } from './types';
 
 export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   public static concat<T>(a: Stream<T>, b: Stream<T>): Stream<T> {
@@ -366,8 +373,8 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     return Optional.of(element);
   }
 
-  @AutoClose
   @IsNotClosed
+  @AutoClose
   public noneMatch(predicate: (value: T) => boolean): boolean {
     for (const elem of this.#iterable) {
       if (predicate(elem)) {
@@ -391,15 +398,51 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     });
   }
 
-  public reduce(accumulator: (value: T) => T): Optional<T>;
-  public reduce(identity: T, accumulator: (value: T) => T): T;
+  public reduce(accumulator: BinaryOperator<T>): Optional<T>;
+  public reduce(identity: T, accumulator: BinaryOperator<T>): T;
+  public reduce<U>(identity: U, accumulator: BiFunction<U, T, U>): U;
+
+  @IsNotClosed
+  @AutoClose
   public reduce<U>(
-    identity: U,
-    accumulator: (identity: U, value: T) => U,
-    combiner: (value: U) => U
-  ): U;
-  public reduce<U>(...args: unknown[]): Optional<T> | T | U {
-    throw new Error('Method not implemented.');
+    identityOrAccumulator: T | U | BinaryOperator<T>,
+    accumulator?: BinaryOperator<T> | BiFunction<U, T, U>
+  ): Optional<T> | T | U {
+    if (isFunction(identityOrAccumulator)) {
+      let result: T | null | undefined;
+      for (const element of this.#iterable) {
+        if (isNone(result)) {
+          result = element;
+          continue;
+        }
+
+        result = identityOrAccumulator(result, element);
+      }
+
+      // stream was empty
+      if (isUndefined(result)) {
+        return Optional.empty();
+      }
+
+      if (isNull(result)) {
+        throw new NullPointerException();
+      }
+
+      return Optional.of(result);
+    }
+
+    if (isFunction(accumulator)) {
+      let result: T | U = identityOrAccumulator;
+
+      for (const element of this.#iterable) {
+        // we need to assume that the user has provided the correct accumulator function to handle the result
+        result = accumulator(result as T & U, element);
+      }
+
+      return result;
+    }
+
+    throw new IllegalStateException('Improper arguments provided.');
   }
 
   public skip(n: number): Stream<T> {
