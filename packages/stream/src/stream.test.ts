@@ -1,6 +1,6 @@
 import { IllegalStateException } from '@ts-java/common/exception/illegal-state';
 import { NullPointerException } from '@ts-java/common/exception/null-pointer';
-import { isNumber } from '@ts-java/common/typeguards';
+import { isNumber, isString } from '@ts-java/common/typeguards';
 import { Comparator } from '@ts-java/comparator';
 import { Optional } from '@ts-java/optional';
 import { describe, expect, it, vitest } from 'vitest';
@@ -301,6 +301,18 @@ describe('Stream', () => {
       expect(result).toBe(true);
     });
 
+    it('should not evaluate the predicate for an empty stream', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 0;
+        });
+
+      Stream.empty<number>().allMatch(spy);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
     it('should return true when all elements of the stream match the given predicate', () => {
       const result = Stream.of(1, 2, 3).allMatch(isNumber);
 
@@ -335,10 +347,12 @@ describe('Stream', () => {
     });
 
     it('should be a terminal operation', () => {
-      const stream = Stream.of(1, 2, 3, 4);
-      stream.allMatch(() => false);
+      const spy = vitest.fn();
+      Stream.of(1, 2, 3, 4)
+        .onClose(spy)
+        .allMatch(() => false);
 
-      expect(() => stream.allMatch(() => true)).toThrow(IllegalStateException);
+      expect(spy).toHaveBeenCalled();
     });
 
     it('should throw an IllegalStateException when the stream was closed before', () => {
@@ -745,6 +759,77 @@ describe('Stream', () => {
       expect(() =>
         stream.max(Comparator.nullLast(Comparator.naturalOrder()))
       ).toThrow(NullPointerException);
+    });
+  });
+
+  describe('noneMatch', () => {
+    it('should return true for an empty stream', () => {
+      const result = Stream.empty().noneMatch(() => true);
+
+      expect(result).toBe(true);
+    });
+
+    it('should not evaluate the predicate for an empty stream', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 0;
+        });
+
+      Stream.empty<number>().noneMatch(spy);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should return true when no element of the stream matches the given predicate', () => {
+      const result = Stream.of(1, 2, 3).noneMatch(isString);
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when one of the elements matches the given predicate', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 0;
+        });
+
+      const result = Stream.of(1, 2, 3).allMatch(spy);
+
+      expect(result).toBe(false);
+    });
+
+    it('should stop iterating when one of the elements matches the given predicate', () => {
+      const spy = vitest
+        .fn<(v: number) => boolean>()
+        .mockImplementation((v) => {
+          return v % 2 === 0;
+        });
+
+      Stream.of(1, 2, 3).noneMatch(spy);
+
+      expect(spy).toHaveBeenCalledTimes(2);
+
+      expect(spy).toHaveBeenNthCalledWith(1, 1);
+      expect(spy).toHaveBeenNthCalledWith(2, 2);
+    });
+
+    it('should be a terminal operation', () => {
+      const spy = vitest.fn();
+      Stream.of(1, 2, 3, 4)
+        .onClose(spy)
+        .noneMatch(() => true);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3, 4);
+      stream.close();
+
+      expect(() => stream.noneMatch(vitest.fn())).toThrow(
+        IllegalStateException
+      );
     });
   });
 

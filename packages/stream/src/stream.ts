@@ -366,8 +366,16 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     return Optional.of(element);
   }
 
+  @AutoClose
+  @IsNotClosed
   public noneMatch(predicate: (value: T) => boolean): boolean {
-    throw new Error('Method not implemented.');
+    for (const elem of this.#iterable) {
+      if (predicate(elem)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public peek(action: (value: T) => void): Stream<T> {
