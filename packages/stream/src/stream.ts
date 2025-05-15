@@ -446,7 +446,27 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public skip(n: number): Stream<T> {
-    throw new Error('Method not implemented.');
+    if (Number.isNaN(n) || !Number.isInteger(n) || n < 0) {
+      throw new TypeError('n must be a positive integer');
+    }
+
+    let skipped = 0;
+    return new Stream.#Impl<T>({
+      next: () => {
+        // when first executed, iterate over as many elements without using them as told
+        while (skipped < n) {
+          this.#iterator.next();
+          skipped++;
+        }
+
+        // continue iterating as usual
+        for (const elem of this.#iterable) {
+          return { value: elem, done: false };
+        }
+
+        return { value: undefined, done: true };
+      },
+    });
   }
 
   public sorted(): Stream<T>;

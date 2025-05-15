@@ -1047,4 +1047,54 @@ describe('Stream', () => {
       expect(() => stream.reduce(() => 1)).toThrow(IllegalStateException);
     });
   });
+
+  describe('skip', () => {
+    it('should be an intermediate operation and return a new Stream', () => {
+      const result = Stream.of(1, 2, 3).skip(2);
+
+      expect(result).toBeInstanceOf(Stream);
+    });
+
+    it('should not iterate over the elements immediately', () => {
+      const spy = vitest.fn();
+
+      Stream.of(1, 2, 3).peek(spy).skip(2);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should discard the first n elements of the stream', () => {
+      const iterator = Stream.of(1, 2, 3).skip(2).iterator();
+
+      expect(iterator.next().value).toBe(3);
+      expect(iterator.next().done).toBe(true);
+    });
+
+    it('should not pass the discarded elements to the next stream', () => {
+      const beforeSpy = vitest.fn();
+      const afterSpy = vitest.fn();
+
+      const result = Stream.of(1, 2, 3)
+        .peek(beforeSpy)
+        .skip(2)
+        .peek(afterSpy)
+        .count();
+
+      expect(result).toBe(1);
+      expect(beforeSpy).toHaveBeenCalledTimes(3);
+      expect(afterSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw a TypeError if the provided number is smaller than 0', () => {
+      expect(() => Stream.of(1, 2, 3).skip(-1)).toThrow(TypeError);
+    });
+
+    it('should throw a TypeError if the provided value is NaN', () => {
+      expect(() => Stream.of(1, 2, 3).skip(NaN)).toThrow(TypeError);
+    });
+
+    it('should throw a TypeError if the provided value is not an integer', () => {
+      expect(() => Stream.of(1, 2, 3).skip(1.5)).toThrow(TypeError);
+    });
+  });
 });
