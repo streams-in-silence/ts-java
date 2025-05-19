@@ -1098,6 +1098,102 @@ describe('Stream', () => {
     });
   });
 
+  describe('sorted', () => {
+    describe('without comparator argument', () => {
+      it('should be an intermediate operation and return a new Stream', () => {
+        const result = Stream.of(1, 2, 3).sorted();
+
+        expect(result).toBeInstanceOf(Stream);
+      });
+
+      it('should not iterate over the elements immediately', () => {
+        const spy = vitest.fn();
+
+        Stream.of(1, 2, 3).peek(spy).sorted();
+
+        expect(spy).not.toHaveBeenCalled();
+      });
+
+      it('should sort the elements in the stream in natural order', () => {
+        const stream = Stream.of(3, 1, 2).sorted();
+
+        const iterator = stream.iterator();
+
+        expect(iterator.next().value).toBe(1);
+        expect(iterator.next().value).toBe(2);
+        expect(iterator.next().value).toBe(3);
+      });
+
+      it('should iterate through all elements of the stream before passing the first element along', () => {
+        const beforeSort = vitest.fn();
+        const afterSort = vitest.fn();
+        const stream = Stream.of(3, 1, 2)
+          .peek(beforeSort)
+          .sorted()
+          .peek(afterSort);
+
+        const iterator = stream.iterator();
+
+        iterator.next();
+        expect(beforeSort).toHaveBeenCalledTimes(3);
+        expect(afterSort).toHaveBeenCalledExactlyOnceWith(1);
+        expect(afterSort).toHaveBeenCalledAfter(beforeSort);
+      });
+
+      it('should not throw an error when the elements in the stream are not comparable by natural order', () => {
+        expect(() => Stream.of([3], [2], [1]).sorted()).not.toThrow();
+      });
+
+      it('should throw an error when the elements in the stream are not comparable by natural order and the terminal operation is executed', () => {
+        const stream = Stream.of([1], [2], [3]).sorted();
+
+        expect(() => stream.toArray()).toThrow(TypeError);
+      });
+    });
+
+    describe('with comparator argument', () => {
+      it('should be an intermediate operation and return a new Stream', () => {
+        const result = Stream.of(1, 2, 3).sorted(Comparator.reverseOrder());
+
+        expect(result).toBeInstanceOf(Stream);
+      });
+
+      it('should not iterate over the elements immediately', () => {
+        const spy = vitest.fn();
+
+        Stream.of(1, 2, 3).peek(spy).sorted(Comparator.reverseOrder());
+
+        expect(spy).not.toHaveBeenCalled();
+      });
+
+      it('should sort the elements in the stream in natural order', () => {
+        const stream = Stream.of(3, 1, 2).sorted(Comparator.reverseOrder());
+
+        const iterator = stream.iterator();
+
+        expect(iterator.next().value).toBe(3);
+        expect(iterator.next().value).toBe(2);
+        expect(iterator.next().value).toBe(1);
+      });
+
+      it('should iterate through all elements of the stream before passing the first element along', () => {
+        const beforeSort = vitest.fn();
+        const afterSort = vitest.fn();
+        const stream = Stream.of(3, 1, 2)
+          .peek(beforeSort)
+          .sorted(Comparator.reverseOrder())
+          .peek(afterSort);
+
+        const iterator = stream.iterator();
+
+        iterator.next();
+        expect(beforeSort).toHaveBeenCalledTimes(3);
+        expect(afterSort).toHaveBeenCalledExactlyOnceWith(3);
+        expect(afterSort).toHaveBeenCalledAfter(beforeSort);
+      });
+    });
+  });
+
   describe('toArray', () => {
     it('should return an array containing the elements of the stream', () => {
       const result = Stream.of(1, 2, 3).toArray();

@@ -509,8 +509,32 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
 
   public sorted(): Stream<T>;
   public sorted(comparator: Comparator<T>): Stream<T>;
-  public sorted(comparator?: Comparator<T>): Stream<T> {
-    throw new Error('Method not implemented.');
+  public sorted(
+    // @ts-expect-error - T might not be sortable by natural order but the comparator will throw an error, which is expected
+    comparator: Comparator<T> = Comparator.naturalOrder()
+  ): Stream<T> {
+    // the iterator that will hold all elements in sorted order once the terminal operation has been executed.
+    let sortedIterator: Iterable<T>;
+
+    return new Stream.#Impl<T>(
+      {
+        next: () => {
+          // only sort all elements when the terminal operation has been executed
+          if (isUndefined(sortedIterator)) {
+            const sorted = Array.from(this.#iterable).sort(comparator.compare);
+            sortedIterator = sorted[Symbol.iterator]();
+          }
+
+          for (const elem of sortedIterator) {
+            return { value: elem, done: false };
+          }
+
+          return { value: undefined, done: true };
+        },
+      },
+      // we only sort but not modify the elements in the stream
+      this.expectedStreamSize
+    );
   }
 
   @IsNotClosed
