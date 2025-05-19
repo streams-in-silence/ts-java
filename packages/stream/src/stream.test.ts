@@ -5,7 +5,7 @@ import { Comparator } from '@ts-java/comparator';
 import { Optional } from '@ts-java/optional';
 import { describe, expect, it, vitest } from 'vitest';
 import { Stream } from './stream';
-import { BinaryOperator, type BiFunction } from './types';
+import type { BiFunction, BinaryOperator } from './types';
 
 describe('Stream', () => {
   describe('static', () => {
@@ -1095,6 +1095,71 @@ describe('Stream', () => {
 
     it('should throw a TypeError if the provided value is not an integer', () => {
       expect(() => Stream.of(1, 2, 3).skip(1.5)).toThrow(TypeError);
+    });
+  });
+
+  describe('toArray', () => {
+    it('should return an array containing the elements of the stream', () => {
+      const result = Stream.of(1, 2, 3).toArray();
+
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(3);
+      expect(result).toStrictEqual([1, 2, 3]);
+    });
+
+    it('should return an empty array for an empty stream', () => {
+      const result = Stream.empty().toArray();
+
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(0);
+      expect(result).toStrictEqual([]);
+    });
+
+    it('should work for a stream that has no expected size', () => {
+      const result = Stream.iterate(1, (val) => ++val)
+        .limit(4)
+        .filter((num) => num % 2 === 0)
+        .toArray();
+
+      expect(result).toHaveLength(2);
+      expect(result).toStrictEqual([2, 4]);
+    });
+
+    it('should work for a stream that is smaller than the expected size', () => {
+      const result = Stream.of(1, 2, 3).limit(4).toArray();
+
+      expect(result).toHaveLength(3);
+      expect(result).toStrictEqual([1, 2, 3]);
+    });
+
+    it('should work for a stream that is bigger than the expected size', () => {
+      const result = Stream.of(1, 2, 3)
+        .flatMap((value) => Stream.of(value, value))
+        .toArray();
+
+      expect(result).toHaveLength(6);
+      expect(result).toStrictEqual([1, 1, 2, 2, 3, 3]);
+    });
+
+    it('should work for a stream that skipped all elements', () => {
+      const result = Stream.of(1, 2, 3).skip(3).toArray();
+
+      expect(result).toHaveLength(0);
+      expect(result).toStrictEqual([]);
+    });
+
+    it('should be a terminal operation', () => {
+      const spy = vitest.fn();
+      Stream.of(1, 2, 3, 4).onClose(spy).toArray();
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should throw an IllegalStateException when the stream was closed before', () => {
+      const stream = Stream.of(1, 2, 3);
+      stream.close();
+
+      expect(() => stream.toArray()).toThrow(IllegalStateException);
     });
   });
 });

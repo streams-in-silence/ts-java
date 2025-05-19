@@ -19,59 +19,71 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     const aIterator = a.iterator();
     const bIterator = b.iterator();
 
-    return new Stream.#Impl<T>({
-      next() {
-        const next = aIterator.next();
+    return new Stream.#Impl<T>(
+      {
+        next() {
+          const next = aIterator.next();
 
-        if (!next.done) {
-          return next;
-        }
+          if (!next.done) {
+            return next;
+          }
 
-        return bIterator.next();
+          return bIterator.next();
+        },
       },
-    });
+      a.expectedStreamSize + b.expectedStreamSize
+    );
   }
 
   public static empty<T>(): Stream<T> {
-    return new Stream.#Impl<T>({
-      next() {
-        return { done: true, value: undefined };
+    return new Stream.#Impl<T>(
+      {
+        next() {
+          return { done: true, value: undefined };
+        },
       },
-    });
+      0
+    );
   }
 
   public static generate<T>(supplier: () => T): Stream<T> {
-    return new Stream.#Impl<T>({
-      next() {
-        return { done: false, value: supplier() };
+    return new Stream.#Impl<T>(
+      {
+        next() {
+          return { done: false, value: supplier() };
+        },
       },
-    });
+      Number.POSITIVE_INFINITY
+    );
   }
 
   public static iterate<T>(seed: T, f: (value: T) => T): Stream<T> {
     let lastValue: T;
 
-    return new Stream.#Impl<T>({
-      next() {
-        if (isUndefined(lastValue)) {
-          lastValue = seed;
-        } else {
-          lastValue = f(lastValue);
-        }
+    return new Stream.#Impl<T>(
+      {
+        next() {
+          if (isUndefined(lastValue)) {
+            lastValue = seed;
+          } else {
+            lastValue = f(lastValue);
+          }
 
-        return { done: false, value: lastValue };
+          return { done: false, value: lastValue };
+        },
       },
-    });
+      Number.POSITIVE_INFINITY
+    );
   }
 
   public static of<T>(element: T): Stream<T>;
   public static of<T>(...elements: T[]): Stream<T>;
   public static of<T>(...elements: T[]): Stream<T> {
-    return new Stream.#Impl<T>(elements[Symbol.iterator]());
+    return new Stream.#Impl<T>(elements[Symbol.iterator](), elements.length);
   }
 
   public static ofArray<T>(element: T[]): Stream<T> {
-    return new Stream.#Impl<T>(element[Symbol.iterator]());
+    return new Stream.#Impl<T>(element[Symbol.iterator](), element.length);
   }
 
   readonly #iterator: Iterator<T>;
@@ -83,16 +95,23 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   private isClosed: boolean;
 
   /**
+   * Internal counter to know how many elements the stream will produce.
+   * Might be Infinity for generator streams.
+   */
+  private readonly expectedStreamSize: number;
+
+  /**
    * A list of all provided closeHandlers.
    */
   private closeHandlers: Array<() => void>;
 
-  protected constructor(iterator: Iterator<T>) {
+  protected constructor(iterator: Iterator<T>, streamSize: number) {
     this.#iterator = iterator;
-
     this.#iterable = {
       [Symbol.iterator]: () => iterator,
     };
+
+    this.expectedStreamSize = streamSize;
 
     this.isClosed = false;
     this.closeHandlers = [];
@@ -124,8 +143,8 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   static readonly #Impl = class StreamImpl<T> extends Stream<T> {
-    constructor(iterator: Iterator<T>) {
-      super(iterator);
+    constructor(iterator: Iterator<T>, streamSize = 0) {
+      super(iterator, streamSize);
     }
 
     static {
@@ -237,37 +256,41 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     let mappedStream: Stream<R>;
     let mappedIterator: Iterator<R> | null = null;
 
-    return new Stream.#Impl<R>({
-      next() {
-        // go over to our next element in the stream
-        if (isNull(mappedIterator)) {
-          // the next element of the existing stream
-          const outerNext = iterator.next();
+    return new Stream.#Impl<R>(
+      {
+        next() {
+          // go over to our next element in the stream
+          if (isNull(mappedIterator)) {
+            // the next element of the existing stream
+            const outerNext = iterator.next();
 
-          // if we're done, end the iteration
-          if (outerNext.done) {
-            return { done: true, value: undefined };
+            // if we're done, end the iteration
+            if (outerNext.done) {
+              return { done: true, value: undefined };
+            }
+
+            // get the next stream so we can iterate over it
+            mappedStream = mapper(outerNext.value);
+            mappedIterator = mappedStream.#iterator;
           }
 
-          // get the next stream so we can iterate over it
-          mappedStream = mapper(outerNext.value);
-          mappedIterator = mappedStream.#iterator;
-        }
+          const innerNext = mappedIterator.next();
 
-        const innerNext = mappedIterator.next();
+          // if the mapped stream is done, close it and go to our next element
+          if (innerNext.done) {
+            mappedStream.close();
+            mappedIterator = null;
 
-        // if the mapped stream is done, close it and go to our next element
-        if (innerNext.done) {
-          mappedStream.close();
-          mappedIterator = null;
+            // recurse to the our next element
+            return this.next();
+          }
 
-          // recurse to the our next element
-          return this.next();
-        }
-
-        return innerNext;
+          return innerNext;
+        },
       },
-    });
+      // assume that there will be at least the same amount of elements
+      this.expectedStreamSize
+    );
   }
 
   // @todo: replace => Stream<number> with NumberStream
@@ -293,27 +316,35 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     }
 
     let passedElements = 0;
-    return new Stream.#Impl({
-      next: () => {
-        if (passedElements >= maxSize) {
-          return { done: true, value: undefined };
-        }
-        passedElements++;
-        return this.#iterator.next();
+    return new Stream.#Impl(
+      {
+        next: () => {
+          if (passedElements >= maxSize) {
+            return { done: true, value: undefined };
+          }
+          passedElements++;
+          return this.#iterator.next();
+        },
       },
-    });
+      // assume that there might be up to maxSize elements remaining in the stream
+      maxSize
+    );
   }
 
   public map<U>(mapper: (element: T) => U): Stream<U> {
-    return new Stream.#Impl<U>({
-      next: () => {
-        for (const elem of this.#iterable) {
-          return { value: mapper(elem), done: false };
-        }
+    return new Stream.#Impl<U>(
+      {
+        next: () => {
+          for (const elem of this.#iterable) {
+            return { value: mapper(elem), done: false };
+          }
 
-        return { value: undefined, done: true };
+          return { value: undefined, done: true };
+        },
       },
-    });
+      // just mapping the value does not alter the total amount of elements
+      this.expectedStreamSize
+    );
   }
 
   // @todo: replace Stream<number> with NumberString
@@ -386,22 +417,25 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public peek(action: (value: T) => void): Stream<T> {
-    return new Stream.#Impl<T>({
-      next: () => {
-        for (const elem of this.#iterable) {
-          action(elem);
-          return { value: elem, done: false };
-        }
+    return new Stream.#Impl<T>(
+      {
+        next: () => {
+          for (const elem of this.#iterable) {
+            action(elem);
+            return { value: elem, done: false };
+          }
 
-        return { value: undefined, done: true };
+          return { value: undefined, done: true };
+        },
       },
-    });
+      // just executing a function on each value before passing it down does not alter the total elements
+      this.expectedStreamSize
+    );
   }
 
   public reduce(accumulator: BinaryOperator<T>): Optional<T>;
   public reduce(identity: T, accumulator: BinaryOperator<T>): T;
   public reduce<U>(identity: U, accumulator: BiFunction<U, T, U>): U;
-
   @IsNotClosed
   @AutoClose
   public reduce<U>(
@@ -451,22 +485,26 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     }
 
     let skipped = 0;
-    return new Stream.#Impl<T>({
-      next: () => {
-        // when first executed, iterate over as many elements without using them as told
-        while (skipped < n) {
-          this.#iterator.next();
-          skipped++;
-        }
+    return new Stream.#Impl<T>(
+      {
+        next: () => {
+          // when first executed, iterate over as many elements without using them as told
+          while (skipped < n) {
+            this.#iterator.next();
+            skipped++;
+          }
 
-        // continue iterating as usual
-        for (const elem of this.#iterable) {
-          return { value: elem, done: false };
-        }
+          // continue iterating as usual
+          for (const elem of this.#iterable) {
+            return { value: elem, done: false };
+          }
 
-        return { value: undefined, done: true };
+          return { value: undefined, done: true };
+        },
       },
-    });
+      // assume that there will be n elements fewer than before
+      this.expectedStreamSize - n
+    );
   }
 
   public sorted(): Stream<T>;
@@ -475,9 +513,20 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     throw new Error('Method not implemented.');
   }
 
-  public toArray(): T[];
-  public toArray<A>(generator: (number: number) => A[]): A[];
-  public toArray<A>(generator?: (number: number) => A[]): T[] | A[] {
-    throw new Error('Method not implemented.');
+  @IsNotClosed
+  @AutoClose
+  public toArray(): T[] {
+    const array = new Array(this.expectedStreamSize);
+    let idx = 0;
+
+    for (const elem of this.#iterable) {
+      array[idx] = elem;
+      idx++;
+    }
+
+    // trim potentially too long array
+    array.length = idx;
+
+    return array;
   }
 }
