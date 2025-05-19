@@ -306,10 +306,6 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
     }
   }
 
-  public forEachOrdered(action: (value: T) => void): void {
-    throw new Error('Method not implemented.');
-  }
-
   public limit(maxSize: number): Stream<T> {
     if (Number.isNaN(maxSize) || !Number.isInteger(maxSize) || maxSize < 0) {
       throw new TypeError('maxSize must be a positive integer');
