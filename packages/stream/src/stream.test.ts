@@ -39,20 +39,6 @@ describe('Stream', () => {
 
         expect(iterator.next().done).toBe(true);
       });
-
-      it.skip('should create a new Stream whose elements are ordered if both provided streams are ordered', () => {
-        const iterator = Stream.concat(
-          Stream.of(1, 3).sorted(),
-          Stream.of(2, 4).sorted()
-        ).iterator();
-
-        expect(iterator.next().value).toBe(1);
-        expect(iterator.next().value).toBe(2);
-        expect(iterator.next().value).toBe(3);
-        expect(iterator.next().value).toBe(4);
-
-        expect(iterator.next().done).toBe(true);
-      });
     });
 
     describe('empty', () => {
