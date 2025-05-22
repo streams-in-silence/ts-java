@@ -200,7 +200,36 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
   }
 
   public distinct(): Stream<T> {
-    throw new Error('Method not implemented.');
+    let uniqueElements: Set<T> | undefined;
+    const iterator = this.#iterator;
+
+    return new Stream.#Impl<T>({
+      next() {
+        const next = iterator.next();
+
+        if (next.done) {
+          // clear up any references to potential objects
+          uniqueElements?.clear();
+
+          return { done: true, value: undefined };
+        }
+
+        if (isUndefined(uniqueElements)) {
+          uniqueElements = new Set();
+        }
+
+        const value = next.value;
+
+        // skip element
+        if (uniqueElements.has(value)) {
+          return this.next();
+        }
+
+        // add element to seen list
+        uniqueElements.add(value);
+        return { done: false, value };
+      },
+    });
   }
 
   public filter(predicate: (value: T) => boolean): Stream<T> {

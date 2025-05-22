@@ -434,6 +434,76 @@ describe('Stream', () => {
     });
   });
 
+  describe('distinct', () => {
+    it('should be an intermediate operation and return a new Stream', () => {
+      const result = Stream.of(1, 2, 3, 2, 1).distinct();
+
+      expect(result).toBeInstanceOf(Stream);
+    });
+
+    it('should not iterate over the elements immediately', () => {
+      const spy = vitest.fn();
+
+      Stream.of(1, 2, 3, 2, 1).peek(spy).distinct();
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should remove elements that have been encountered already', () => {
+      const iterator = Stream.of(1, 2, 3, 2, 1).distinct().iterator();
+
+      expect(iterator.next().value).toBe(1);
+      expect(iterator.next().value).toBe(2);
+      expect(iterator.next().value).toBe(3);
+      expect(iterator.next().done).toBe(true);
+    });
+
+    it('should remove objects that have been encountered already when they are the same instance', () => {
+      const foo = { foo: 'foo' };
+      const bar = { bar: 'bar' };
+
+      const iterator = Stream.of<Record<string, string>>(foo, foo, bar, bar)
+        .distinct()
+        .iterator();
+
+      expect(iterator.next().value).toBe(foo);
+      expect(iterator.next().value).toBe(bar);
+      expect(iterator.next().done).toBe(true);
+    });
+
+    it('should not iterate immediately over all items when invoking a terminal operation', () => {
+      const spy = vitest.fn();
+
+      const iterator = Stream.of(1, 1, 2, 3).peek(spy).distinct().iterator();
+
+      expect(spy).not.toHaveBeenCalled();
+
+      iterator.next();
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      iterator.next();
+      // skip second 1 and returns 2
+      expect(spy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should not remove objects that are not the same instance', () => {
+      const iterator = Stream.of<Record<string, string>>(
+        { foo: 'foo' },
+        { foo: 'foo' },
+        { bar: 'bar' },
+        { bar: 'bar' }
+      )
+        .distinct()
+        .iterator();
+
+      expect(iterator.next().value).toStrictEqual({ foo: 'foo' });
+      expect(iterator.next().value).toStrictEqual({ foo: 'foo' });
+      expect(iterator.next().value).toStrictEqual({ bar: 'bar' });
+      expect(iterator.next().value).toStrictEqual({ bar: 'bar' });
+      expect(iterator.next().done).toBe(true);
+    });
+  });
+
   describe('filter', () => {
     it('should be an intermediate operation and return a new Stream', () => {
       const result = Stream.of(1, 2, 3).filter(vitest.fn());
