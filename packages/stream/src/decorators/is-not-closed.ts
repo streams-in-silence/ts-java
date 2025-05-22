@@ -21,7 +21,6 @@ export function IsNotClosed(
   const original = descriptor.value;
 
   descriptor.value = function (this: Stream<unknown>, ...args: unknown[]) {
-    // @ts-expect-error isClosed is a private property
     if (this.isClosed) {
       throw new IllegalStateException();
     }

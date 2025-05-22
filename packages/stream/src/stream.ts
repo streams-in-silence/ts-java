@@ -91,8 +91,9 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
 
   /**
    * Internal indicator if a stream has been consumed.
+   * Used by the {@link IsNotClosed} decorator.
    */
-  private isClosed: boolean;
+  protected isClosed: boolean;
 
   /**
    * Internal counter to know how many elements the stream will produce.
