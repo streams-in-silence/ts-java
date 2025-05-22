@@ -201,33 +201,36 @@ export abstract class Stream<T> implements BaseStream<T, Stream<T>> {
 
   public distinct(): Stream<T> {
     let uniqueElements: Set<T> | undefined;
-    const iterator = this.#iterator;
 
     return new Stream.#Impl<T>({
-      next() {
-        const next = iterator.next();
-
-        if (next.done) {
-          // clear up any references to potential objects
-          uniqueElements?.clear();
-
-          return { done: true, value: undefined };
-        }
-
+      next: () => {
         if (isUndefined(uniqueElements)) {
           uniqueElements = new Set();
         }
 
-        const value = next.value;
+        let next: IteratorResult<T>;
 
-        // skip element
-        if (uniqueElements.has(value)) {
-          return this.next();
-        }
+        do {
+          next = this.#iterator.next();
+          if (next.done) {
+            break;
+          }
 
-        // add element to seen list
-        uniqueElements.add(value);
-        return { done: false, value };
+          const value = next.value;
+          if (uniqueElements.has(value)) {
+            // try next element if it was already encountered
+            continue;
+          }
+
+          // add to encountered list
+          uniqueElements.add(value);
+
+          return { done: false, value };
+        } while (!next.done);
+
+        // clean up potential object references
+        uniqueElements.clear();
+        return { done: true, value: undefined };
       },
     });
   }

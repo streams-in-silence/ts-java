@@ -458,19 +458,6 @@ describe('Stream', () => {
       expect(iterator.next().done).toBe(true);
     });
 
-    it('should remove objects that have been encountered already when they are the same instance', () => {
-      const foo = { foo: 'foo' };
-      const bar = { bar: 'bar' };
-
-      const iterator = Stream.of<Record<string, string>>(foo, foo, bar, bar)
-        .distinct()
-        .iterator();
-
-      expect(iterator.next().value).toBe(foo);
-      expect(iterator.next().value).toBe(bar);
-      expect(iterator.next().done).toBe(true);
-    });
-
     it('should not iterate immediately over all items when invoking a terminal operation', () => {
       const spy = vitest.fn();
 
@@ -484,6 +471,25 @@ describe('Stream', () => {
       iterator.next();
       // skip second 1 and returns 2
       expect(spy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should work for empty streams', () => {
+      const iterator = Stream.empty().distinct().iterator();
+
+      expect(iterator.next().done).toBe(true);
+    });
+
+    it('should remove objects that have been encountered already when they are the same instance', () => {
+      const foo = { foo: 'foo' };
+      const bar = { bar: 'bar' };
+
+      const iterator = Stream.of<Record<string, string>>(foo, foo, bar, bar)
+        .distinct()
+        .iterator();
+
+      expect(iterator.next().value).toBe(foo);
+      expect(iterator.next().value).toBe(bar);
+      expect(iterator.next().done).toBe(true);
     });
 
     it('should not remove objects that are not the same instance', () => {
